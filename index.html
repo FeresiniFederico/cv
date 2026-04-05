@@ -67,6 +67,7 @@
             transform: translateX(0);
         }
 
+        /* Nuova icona foglio con matita */
         #inventory-icon {
             position: absolute;
             top: 8px;
@@ -74,7 +75,22 @@
             font-size: 20px;
             z-index: 20;
             cursor: pointer;
-            animation: pulse-icon 2s infinite;
+            animation: pulse-icon 2s infinite; /* Default pulse */
+        }
+
+        /* Nuova animazione Bump per la fine */
+        @keyframes bump-icon {
+            0% { transform: scale(1); }
+            10% { transform: scale(1.4); }
+            20% { transform: scale(1); }
+            30% { transform: scale(1.3); }
+            40% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        .bump-invoker {
+            animation: bump-icon 1.5s ease-out infinite !important;
+            filter: drop-shadow(0 0 5px #fbbf24);
         }
 
         .ground {
@@ -95,7 +111,7 @@
             font-size: 30px;
             z-index: 5;
             animation: idle-breathe 1s ease-in-out infinite alternate;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, opacity 0.3s ease;
         }
 
         #enemy {
@@ -356,13 +372,28 @@
             100% { transform: scale(1); filter: brightness(1); }
         }
 
-        /* RPG Element: Ambient Data Motes rising and drifting */
+        /* RPG Element: Ambient Data Motes rising and drifting (Fixato) */
         @keyframes data-stream {
-            0% { transform: translateY(100px) translateX(-5px); opacity: 0; filter: blur(1px); }
+            0% { transform: translateY(120px) translateX(-5px); opacity: 0; filter: blur(1px); }
             20% { opacity: 0.8; filter: blur(0px); }
-            50% { transform: translateY(25px) translateX(5px); opacity: 0.6; }
+            50% { transform: translateY(30px) translateX(5px); opacity: 0.6; }
             80% { opacity: 0.8; filter: blur(0px); }
-            100% { transform: translateY(-50px) translateX(-3px); opacity: 0; filter: blur(1px); }
+            100% { transform: translateY(-60px) translateX(-3px); opacity: 0; filter: blur(1px); }
+        }
+
+        /* Nuova animazione Vittoria Finale: Salto e Coriandoli */
+        @keyframes victory-jump {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(0, -50px) scale(1.2); }
+            40% { transform: translate(0, 0) scale(1); }
+            60% { transform: translate(0, -30px) scale(1.1); }
+            80% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(150px) translateX(20px) rotate(360deg); opacity: 0; }
         }
 
         .walking { animation: walk 0.4s infinite !important; }
@@ -370,6 +401,7 @@
         .attacking { animation: attack 0.4s ease-out !important; }
         .shaking { animation: screen-shake 0.3s linear; }
         .evolving { animation: evolve 0.6s ease-out !important; }
+        .victory-dance { animation: victory-jump 2s ease-out infinite !important; }
 
         .damage-text {
             position: absolute;
@@ -393,23 +425,31 @@
         /* RPG Element: Ambient effects container */
         #ambient-effects {
             position: absolute;
-            top: 30px; /* Sotto il banner */
-            bottom: 60px; /* Sopra i personaggi */
+            top: 25px; /* Sotto il banner */
+            bottom: 65px; /* Sopra i personaggi */
             left: 0;
             width: 100%;
             pointer-events: none;
             overflow: hidden;
             z-index: 2; /* Sopra il landmark, sotto personaggi */
-            opacity: 0.2; /* Molto sfocato */
+            opacity: 0.25; /* Sfocatura leggera */
         }
 
         .data-mote {
             position: absolute;
             font-size: 8px;
             font-family: var(--pixel-font);
-            color: var(--ui-color); /* Cambia colore via JS */
             animation: data-stream 4s linear forwards;
             pointer-events: none;
+        }
+
+        /* Classe per coriandoli finale */
+        .confetti {
+            position: absolute;
+            font-size: 14px;
+            z-index: 4;
+            pointer-events: none;
+            animation: confetti-fall 2.5s ease-out forwards;
         }
 
         /* RPG Element: Level up overlay */
@@ -434,11 +474,11 @@
         <div id="level-banner">LOADING...</div>
         <div id="landmark">🏔️</div>
         
-        <div id="inventory-icon" onclick="game.toggleInventory()">🎒</div>
+        <div id="inventory-icon" onclick="game.toggleInventory()">📝</div>
         
         <div id="ambient-effects"></div>
 
-        <div id="player">👶</div>
+        <div id="player">💻</div>
         
         <div id="enemy">
             <div id="hp-bar"><div id="hp-fill"></div></div>
@@ -562,7 +602,7 @@
     <script>
         const gameScript = [
             // INTRO
-            { type: 'text', level: 'MILAN, ITALY', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #0f172a, #1e293b)', icon: '⛪', comp: 'F. FERESINI', date: 'PROFILE', playerSprite: '👶', text: 'Welcome Recruiter! After graduating at the Politecnico di Milano, I moved across France and Switzerland in search of international environments. Having tackled complex projects in Travel, Ad-Tech, and Finance, I am a highly adaptable engineer who knows how to embrace new challenges. Tap "NEXT" to see my journey...' },
+            { type: 'text', level: 'MILAN, ITALY', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #0f172a, #1e293b)', icon: '⛪', comp: 'F. FERESINI', date: 'PROFILE', playerSprite: '💻', text: 'Welcome Recruiter! After graduating at the Politecnico di Milano, I moved across France and Switzerland in search of international environments. Having tackled complex projects in Travel, Ad-Tech, and Finance, I am a highly adaptable engineer who knows how to embrace new challenges. Tap "NEXT" to see my journey...' },
             
             // LEVEL 1: ALTEN / AMADEUS (2017 - 2019)
             { type: 'walk', level: 'LEVEL 1: FRANCE', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #1c1917, #44403c)', icon: '🌴', playerSprite: '👶' },
@@ -579,7 +619,6 @@
 
             // LEVEL 4: SYSDIG (2023 - 2025)
             { type: 'walk', level: 'LEVEL 4: MILAN', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', playerSprite: '🤓' },
-            // AGGIORNATO TITOLO SYSDIG AGENT
             { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', enemy: 'runtime vulnerability scanning', enemyIcon: '🛸', floating: '-80% RAM!', playerSprite: '🤓', text: '<b>1) Company & Project:</b> Sysdig is a leader in cloud security. My mission focused on vulnerability scanning and runtime security in K8s and host filesystems.<br><br><b>2) The Challenge:</b> The existing runtime vulnerability scanning on K8s relied on a DaemonSet, consuming too many resources on clients\' clusters.<br><br><b>3) The Solution:</b> I designed and developed the equivalent solution as a ReplicaSet. This reduced the memory footprint of the scanning agents on the clusters by over 80%. I also developed highly parallelized, distributed systems analyzing runtime vulnerabilities for containers launched by various engines like Docker, Podman, CRI-O. <i>Skills: Go, Kubernetes, Parallel Programming, Distributed Systems.</i>' },
             { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', enemy: 'MASSIVE SCALE BACKEND', enemyIcon: '💻', floating: 'REDIS UNLOCKED! 🛡️', playerSprite: '🤓', text: '<b>1) Company & Project:</b> The agents deployed on nodes send vulnerability data to the backend (SaaS or On-Prem), where analysis is centralized.<br><br><b>2) The Challenge:</b> Enterprise clients have clusters with thousands of nodes running thousands of containers. Creating a scalable and reliable system to process this massive incoming load was highly complex.<br><br><b>3) The Solution:</b> I followed the design and development of the backend system, building a highly scalable, eventually consistent distributed system. I leveraged Redis for high-speed caching and distributed locking to solve concurrency bottlenecks. <i>Skills: Redis, Distributed Locking, Eventual Consistency.</i>' },
             
@@ -587,18 +626,18 @@
             { type: 'walk', level: 'LEVEL 5: ZURICH', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', playerSprite: '🤓' },
             { type: 'enemy', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', enemy: 'TAX REPORTING ENGINE', enemyIcon: '👹', floating: 'SQL OPTIMIZED!', playerSprite: '🤓', text: '<b>1) Company & Project:</b> Avaloq provides core banking software. I work as a Software Engineer in the Tax and Legal Reporting team. Beyond standard reporting, our system handles the actual management of tax orders for major banks. <i>I was entrusted with the ownership of some of the most used and legacy calculation engines in the system, specifically the German tax engine.</i><br><br><b>2) The Challenge:</b> The difficulty lies in building an incredibly robust system with minimal possibility of errors. Given the enormous volume of data, it is technically necessary to have highly performant and scalable code and queries.<br><br><b>3) The Solution:</b> I ensure performance by designing optimized databases and writing highly scalable PL/SQL code to handle the massive load. <i>Skills: DB Design, Query Optimization, PL/SQL, Scalability.</i>' },
 
-            // FINALE
-            { type: 'final', level: '🏆 QUEST COMPLETED!', flag: '🏁', bg: 'linear-gradient(to bottom, #1e1b4b, #2e1065)', icon: '🏆', comp: 'F. FERESINI', date: 'HIRED!', playerSprite: '🤓', text: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies, programming languages, business domains, and complex technical challenges. <br><br><b>This journey has honed my ability to quickly master new tech stacks, adapt to unfamiliar problems, and seamlessly translate my technical expertise across entirely different industries. Click "CONTACT ME" to reach out!</b>' }
+            // FINALE (Animazione Salto)
+            { type: 'final', level: '🏆 QUEST COMPLETED!', flag: '🏁', bg: 'linear-gradient(to bottom, #1e1b4b, #2e1065)', icon: '🏆', comp: 'F. FERESINI', date: 'HIRED!', playerSprite: '🤓', text: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies, programming languages, business domains, and complex technical challenges. <br><br><b>This journey has honed my ability to quickly master new tech stacks, adapt to unfamiliar problems, and seamlessly translate my technical expertise across entirely different industries. Click the icon in the top right 📝 to view my full CV!</b>' }
         ];
 
         const game = {
             stepIndex: 0,
             currentEmoji: '⛪',
-            currentPlayerSprite: '👶',
+            currentPlayerSprite: '💻',
             landmarkX: 0, 
             xp: 5,
             totalEnemies: 7, 
-            ambientInterval: null, // Per il Data Stream
+            ambientInterval: null, 
 
             dom: {
                 view: document.getElementById('game-view'),
@@ -614,6 +653,7 @@
                 text: document.getElementById('cv-text'),
                 btn: document.getElementById('main-action-btn'),
                 modal: document.getElementById('inventory-modal'),
+                invIcon: document.getElementById('inventory-icon'),
                 ground: document.getElementById('ground'),
                 xpFill: document.getElementById('xp-fill'),
                 xpText: document.getElementById('xp-text'),
@@ -635,9 +675,11 @@
                 } else if (current.type === 'enemy') {
                     this.doAttack();
                 } else if (current.type === 'final') {
-                    alert("Thank you! Feel free to reach me at: federico.feresini@gmail.com.");
+                    // Cliccando Contact Me alla fine, fa reset
                     this.stepIndex = 0;
                     this.xp = 5;
+                    this.currentPlayerSprite = '💻';
+                    this.currentEmoji = '⛪';
                     this.render();
                     this.updateXPBar();
                 }
@@ -660,7 +702,6 @@
                 p.classList.add('attacking');
                 p.innerText = "⚔️" + this.currentPlayerSprite;
                 
-                // 1. Momento dell'impatto (metà animazione)
                 setTimeout(() => {
                     this.dom.hpFill.style.width = '0%';
                     view.classList.add('shaking');
@@ -676,7 +717,6 @@
                     setTimeout(() => dmg.remove(), 800);
                 }, 200);
 
-                // 2. Vittoria!
                 setTimeout(() => {
                     p.classList.remove('attacking');
                     p.style.animation = "idle-breathe 1s ease-in-out infinite alternate";
@@ -738,6 +778,29 @@
                 setTimeout(() => p.remove(), 400);
             },
 
+            // Effetto coriandoli per la vittoria finale
+            createVictoryConfetti(parent) {
+                const shapes = ['■', '▲', '●', '✦'];
+                const colors = ['#fbbf24', '#ef4444', '#22c55e', '#6366f1', '#f472b6'];
+                
+                // Crea 15 coriandoli a raffica
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const c = document.createElement('div');
+                        c.className = 'confetti';
+                        c.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+                        c.style.color = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        // Posizione randomica intorno al nerd
+                        c.style.left = (10 + Math.random() * 20) + '%';
+                        c.style.bottom = (40 + Math.random() * 30) + 'px';
+                        
+                        parent.appendChild(c);
+                        setTimeout(() => c.remove(), 2500);
+                    }, i * 100);
+                }
+            },
+
             updateXPBar() {
                 if(this.xp > 100) this.xp = 100;
                 this.dom.xpFill.style.width = `${this.xp}%`;
@@ -758,44 +821,52 @@
                 this.dom.modal.classList.toggle('open');
             },
 
-            // RPG Surprise: Genera Data Stream Ambientale
+            // RPG Surprise: Genera Data Stream Ambientale (Fixato)
             startAmbientDataStream(levelGroup, speedFactor = 1) {
                 if (this.ambientInterval) clearInterval(this.ambientInterval);
                 this.dom.ambient.innerHTML = ''; // Pulisci
 
-                let particleSet = ['*', '.', '+']; // Default
-                let color = "var(--ui-color)"; // Default
+                let particleSet = ['*', '.', '+', '`']; // Default
+                let color = "#4b5563"; // Default grigio scuro
 
                 if (levelGroup.includes('FRANCE') || levelGroup.includes('PARIS')) {
-                    particleSet = ['{', '}', '[', ']', '(', ')', '/', '\\'];
+                    particleSet = ['{', '}', '[', ']', '(', ')'];
                     color = "#a78bfa"; // Viola chiaro
                 } else if (levelGroup.includes('ITALY') || levelGroup.includes('MILAN')) {
                     particleSet = ['0', '1', ' binary ', '01'];
                     color = "#34d399"; // Verde chiaro
                 } else if (levelGroup.includes('SWITZERLAND') || levelGroup.includes('ZURICH')) {
-                    particleSet = ['&&', '||', '!', '==', '!=', ' data '];
+                    particleSet = ['&&', '||', '!', '==', ' PL/SQL '];
                     color = "#60a5fa"; // Blu chiaro
                 } else if (levelGroup.includes('🏆 QUEST')) {
-                    particleSet = ['✨', '🏆', '⭐', ' hire '];
+                    particleSet = [' hire ', ' Go ', ' K8s ', ' Redis ', ' C# '];
                     color = "#fbbf24"; // Oro
                 }
 
                 // RPG element: Densità particelle base a XP
-                let baseSpawnRate = Math.max(100, 1000 - (this.xp * 8)); // Più XP = più dati
-                let spawnRate = baseSpawnRate / speedFactor; // Camminando = più veloce
+                let baseSpawnRate = Math.max(150, 1000 - (this.xp * 7)); 
+                let spawnRate = baseSpawnRate / speedFactor; 
 
+                // Avvia il loop immediatamente
                 this.ambientInterval = setInterval(() => {
+                    // Controlla se siamo nell'intro, lì non va lo stream
+                    if (this.dom.player.innerText === '💻' && this.stepIndex === 0) {
+                        clearInterval(this.ambientInterval);
+                        return;
+                    }
+
                     const p = document.createElement('div');
                     p.className = 'data-mote';
                     p.innerText = particleSet[Math.floor(Math.random() * particleSet.length)];
-                    p.style.left = Math.random() * 100 + '%';
+                    p.style.left = (Math.random() * 100) + '%';
                     p.style.color = color;
                     
                     // Variazione velocità e ritardo arcade
-                    let duration = (2 + Math.random() * 3) / speedFactor + 's';
+                    let duration = (parseFloat(2 + Math.random() * 3) / speedFactor) + 's';
                     p.style.animationDuration = duration;
                     
                     this.dom.ambient.appendChild(p);
+                    // Rimuovi dopo l'animazione
                     setTimeout(() => p.remove(), parseFloat(duration) * 1000);
                 }, spawnRate);
             },
@@ -811,6 +882,11 @@
                 this.dom.text.innerHTML = state.text !== undefined ? state.text : '';
 
                 // --- SISTEMA DI EVOLUZIONE DEL PERSONAGGIO ---
+                // Ferma qualsiasi ballo vittoria se non siamo nel finale
+                if (state.type !== 'final') {
+                    this.dom.player.classList.remove('victory-dance');
+                }
+
                 if (this.currentPlayerSprite !== state.playerSprite) {
                     this.currentPlayerSprite = state.playerSprite;
                     this.dom.player.classList.add('evolving');
@@ -837,13 +913,13 @@
                     setTimeout(() => {
                         this.dom.icon.innerText = state.icon;
                         this.dom.icon.style.transition = "none";
-                        this.landmarkX = 100; // Riparte da destra
+                        this.landmarkX = 100; 
                         this.dom.icon.style.transform = `translateX(${this.landmarkX}px)`;
                         
-                        this.dom.icon.getBoundingClientRect(); // Reflow
+                        this.dom.icon.getBoundingClientRect(); 
                         
                         this.dom.icon.style.transition = "transform 0.4s ease-out, opacity 0.4s";
-                        this.landmarkX = 0; // Si posiziona al centro
+                        this.landmarkX = 0; 
                         this.dom.icon.style.transform = `translateX(${this.landmarkX}px)`;
                         this.dom.icon.style.opacity = "0.15";
                     }, 400);
@@ -858,9 +934,22 @@
                 }
                 // --------------------------------------------------
 
-                // RPG Surprise: Avvia Data Stream Ambientale in base al livello
-                let isWalking = (state.type === 'walk');
-                this.startAmbientDataStream(state.level, isWalking ? 2.5 : 1);
+                // RPG Surprise: Gestione Data Stream (Fixato)
+                if (state.type === 'walk' || state.type === 'enemy') {
+                    let isWalking = (state.type === 'walk');
+                    this.startAmbientDataStream(state.level, isWalking ? 2.5 : 1);
+                } else {
+                    // Ferma lo stream nell'intro e testo statico se necessario
+                    if (this.ambientInterval) clearInterval(this.ambientInterval);
+                    this.dom.ambient.innerHTML = '';
+                }
+
+                // --- GESTIONE ICONA INVENTARIO BUMP ---
+                if (state.type === 'final') {
+                    this.dom.invIcon.classList.add('bump-invoker');
+                } else {
+                    this.dom.invIcon.classList.remove('bump-invoker');
+                }
 
                 switch (state.type) {
                     case 'walk':
@@ -914,12 +1003,17 @@
 
                     case 'final':
                          this.dom.player.classList.remove('walking');
-                         this.dom.player.style.animation = "idle-breathe 1s ease-in-out infinite alternate";
                          this.dom.ground.classList.remove('scrolling-ground');
                          this.dom.enemy.style.opacity = '0';
+                         
+                         //RPG: Vittoria Finale
+                         this.dom.player.style.animation = "none";
+                         this.dom.player.classList.add('victory-dance');
+                         this.createVictoryConfetti(this.dom.view);
+
                          this.dom.btn.innerText = "CONTACT ME ✉️";
-                         this.dom.btn.style.backgroundColor = "var(--ui-color)";
-                         this.dom.btn.style.boxShadow = "0 5px 0 #3730a3";
+                         this.dom.btn.style.backgroundColor = "var(--skill-color)"; // Verde vittoria
+                         this.dom.btn.style.boxShadow = "0 5px 0 #15803d";
                          break;
                 }
             }
