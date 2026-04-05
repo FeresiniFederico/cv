@@ -68,15 +68,23 @@
             z-index: 2;
         }
 
-        /* Icona Foglio con Matita */
-        #inventory-icon {
+        /* Container icone in alto a destra */
+        #icons-container {
             position: absolute;
             top: 8px;
             right: 8px;
-            font-size: 20px;
             z-index: 20;
-            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
+
+        .top-ui-icon {
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .top-ui-icon:active { transform: scale(1.2); }
 
         /* Animazione Bump per la fine */
         @keyframes bump-icon {
@@ -93,10 +101,58 @@
             filter: drop-shadow(0 0 5px #fbbf24);
         }
 
+        /* --- TIMELINE MIGLIORATA (Più in basso, icone logiche) --- */
+        #timeline {
+            position: absolute;
+            top: 35px; /* Abbassata per non sovrapporsi */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            font-family: var(--pixel-font);
+            width: auto;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 12px;
+            border: 1px solid #374151;
+        }
+        .t-node {
+            width: 18px;
+            height: 18px;
+            background: #1f2937;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b5563;
+            font-size: 10px;
+            border: 1px solid #4b5563;
+            transition: all 0.3s ease;
+            opacity: 0.4;
+        }
+        .t-node.active {
+            background: #111827;
+            border-color: #fbbf24;
+            opacity: 1;
+            transform: scale(1.1);
+            box-shadow: 0 0 4px #fbbf24;
+        }
+        .t-line {
+            width: 10px;
+            height: 2px;
+            background: #374151;
+            transition: background 0.3s ease;
+        }
+        .t-line.active {
+            background: #22c55e;
+        }
+
         /* --- EFFETTO NUVOLE (Pure CSS - No JS) --- */
         .clouds-container {
             position: absolute;
-            top: 25px;
+            top: 55px;
             left: 0;
             width: 100%;
             height: 50px;
@@ -261,7 +317,7 @@
             width: 100%;
             height: 70px;
             display: flex;
-            justify(content): center;
+            justify-content: center;
             align-items: center;
         }
 
@@ -388,7 +444,7 @@
 
         @keyframes evolve {
             0% { transform: scale(1); }
-            50% { transform: scale(1.8) rotate(15deg); filter: brightness(2) drop-shadow(0 0: 15px #fbbf24); }
+            50% { transform: scale(1.8) rotate(15deg); filter: brightness(2) drop-shadow(0 0 15px #fbbf24); }
             100% { transform: scale(1); }
         }
 
@@ -460,7 +516,26 @@
         <div id="level-banner">LOADING...</div>
         <div id="landmark">🏔️</div>
         
-        <div id="inventory-icon" onclick="game.toggleInventory()">📝</div>
+        <div id="timeline">
+            <span class="t-node" id="t0" title="Graduation">🎓</span>
+            <span class="t-line" id="l1"></span>
+            <span class="t-node" id="t1" title="Alten/Amadeus">🚄</span>
+            <span class="t-line" id="l2"></span>
+            <span class="t-node" id="t2" title="Criteo">📡</span>
+            <span class="t-line" id="l3"></span>
+            <span class="t-node" id="t3" title="Avaloq Core">🏦</span>
+            <span class="t-line" id="l4"></span>
+            <span class="t-node" id="t4" title="Sysdig Security">🛡️</span>
+            <span class="t-line" id="l5"></span>
+            <span class="t-node" id="t5" title="Avaloq Tax">📊</span>
+            <span class="t-line" id="l6"></span>
+            <span class="t-node" id="t6" title="End Game">🏆</span>
+        </div>
+
+        <div id="icons-container">
+            <div id="voice-icon" class="top-ui-icon" onclick="game.toggleVoice()">🔇</div>
+            <div id="inventory-icon" class="top-ui-icon" onclick="game.toggleInventory()">📝</div>
+        </div>
         
         <div class="clouds-container">
             <div class="cloud" style="top: 0px; animation-duration: 20s;">☁️</div>
@@ -564,33 +639,42 @@
 
     <script>
         const gameScript = [
-            // INTRO (Inizia con Computer)
-            { type: 'text', level: 'MILAN, ITALY', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #0f172a, #1e293b)', icon: '⛪', comp: 'F. FERESINI', date: 'PROFILE', playerSprite: '💻', text: 'Welcome Recruiter! After graduating at the Politecnico di Milano, I moved across France and Switzerland in search of international environments. Having tackled complex projects in Travel, Ad-Tech, and Finance, I am a highly adaptable engineer who knows how to embrace new challenges. Tap "NEXT" to see my journey...' },
+            // INTRO
+            { type: 'text', level: 'MILAN, ITALY', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #0f172a, #1e293b)', icon: '⛪', comp: 'F. FERESINI', date: 'PROFILE', playerSprite: '💻', text: 'Welcome Recruiter! After graduating at the Politecnico di Milano, I moved across France and Switzerland in search of international environments. Having tackled complex projects in Travel, Ad-Tech, and Finance, I am a highly adaptable engineer who knows how to embrace new challenges. Tap "NEXT" to see my journey...', 
+              speechText: 'Welcome recruiter. After graduating at the Politecnico di Milano in Italy, I moved across France and Switzerland in search of international environments. Tap next to see my journey!' },
             
-            // LEVEL 1: ALTEN / AMADEUS (Bebè)
+            // LEVEL 1: ALTEN / AMADEUS 
             { type: 'walk', level: 'LEVEL 1: FRANCE', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #1c1917, #44403c)', icon: '🌴', playerSprite: '👶' },
-            { type: 'enemy', level: 'LEVEL 1: ALTEN', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #1c1917, #44403c)', icon: '🌴', comp: 'ALTEN (Amadeus)', date: '2017 - 2019', enemy: 'RAIL TRAVEL SYSTEM', enemyIcon: '🚄', floating: 'FAST API! 💥', playerSprite: '👶', text: '<b>1) Company & Project:</b> I was hired by Alten as a consultant for Amadeus in their Rail department, working on high-performance rail booking procedures.<br><br><b>2) The Challenge:</b> Creating a highly robust and reliable system for processing shopping algorithms, killing manual deployment cycles.<br><br><b>3) The Solution:</b> Engineered fast RESTful APIs in C++ and set up robust Continuous Integration pipelines with Jenkins. <i>Skills: C++, REST APIs, Jenkins.</i>' },
+            { type: 'enemy', level: 'LEVEL 1: ALTEN', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #1c1917, #44403c)', icon: '🌴', comp: 'ALTEN (Amadeus)', date: '2017 - 2019', enemy: 'RAIL TRAVEL SYSTEM', enemyIcon: '🚄', floating: 'FAST API! 💥', playerSprite: '👶', text: '<b>1) Company & Project:</b> I was hired by Alten as a consultant for Amadeus in their Rail department, working on high-performance rail booking procedures.<br><br><b>2) The Challenge:</b> Creating a highly robust and reliable system for processing shopping algorithms, killing manual deployment cycles.<br><br><b>3) The Solution:</b> Engineered fast RESTful APIs in C++ and set up robust Continuous Integration pipelines with Jenkins. <i>Skills: C++, REST APIs, Jenkins.</i>', 
+              speechText: 'From 2017 to 2019, I worked in France as a consultant for Alten on a project for Amadeus. My challenge was to create a highly robust system for rail booking algorithms, killing manual deployment cycles. I successfully solved this by building fast REST APIs in C++ and automated pipelines.' },
             
-            // LEVEL 2: CRITEO (Bambino)
+            // LEVEL 2: CRITEO
             { type: 'walk', level: 'LEVEL 2: PARIS', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', playerSprite: '👦' },
-            { type: 'enemy', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', comp: 'CRITEO (Gateway)', date: '2019 - 2021', enemy: 'MANUAL CAMPAIGNS', enemyIcon: '👥', floating: 'GATEWAY UP!', playerSprite: '👦', text: '<b>1) Company & Project:</b> Criteo is a leader in ad-tech. The company often had to forfeit small clients because managing campaigns required human support. To scale and empower small businesses to manage campaigns autonomously, teams developed custom customer-facing APIs.<br><br><b>2) The Challenge:</b> My team and I were tasked with building a robust entry point to securely expose these internal APIs to small businesses.<br><br><b>3) The Solution:</b> We developed a centralized API Gateway in ASP.NET Core that allowed API versioning, managed authentication and authorization, performed call routing, and handled rate limiting. <i>Skills: C#, ASP.NET Core, API Gateway, Rate Limiting.</i>' },
-            { type: 'enemy', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', comp: 'CRITEO (Big Data)', date: '2019 - 2021', enemy: 'MASSIVE DATA SCALE', enemyIcon: '🐉', floating: 'BIG DATA HERO!', playerSprite: '👦', text: '<b>1) Company & Project:</b> Beyond the Gateway, Criteo required heavy Big Data usage to power business analytics tools.<br><br><b>2) The Challenge:</b> Ingesting and processing massive data streams from various traffic sources in real-time.<br><br><b>3) The Solution:</b> Built data pipelines utilizing Scala, Flink, and Kafka over Hadoop infrastructure. <i>Skills: Scala, Flink, Kafka, Hadoop.</i>' },
+            { type: 'enemy', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', comp: 'CRITEO (Gateway)', date: '2019 - 2021', enemy: 'MANUAL CAMPAIGNS', enemyIcon: '👥', floating: 'GATEWAY UP!', playerSprite: '👦', text: '<b>1) Company & Project:</b> Criteo is a leader in ad-tech. The company often had to forfeit small clients because managing campaigns required human support. To scale and empower small businesses to manage campaigns autonomously, teams developed custom customer-facing APIs.<br><br><b>2) The Challenge:</b> My team and I were tasked with building a robust entry point to securely expose these internal APIs to small businesses.<br><br><b>3) The Solution:</b> We developed a centralized API Gateway in ASP.NET Core that allowed API versioning, managed authentication and authorization, performed call routing, and handled rate limiting. <i>Skills: C#, ASP.NET Core, API Gateway, Rate Limiting.</i>', 
+              speechText: 'In 2019, I joined the tech leader Criteo in Paris. To help small businesses scale autonomously, my team was challenged to build a secure entry point for their campaigns. We created a highly scalable API Gateway in ASP.NET Core.' },
+            { type: 'enemy', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', comp: 'CRITEO (Big Data)', date: '2019 - 2021', enemy: 'MASSIVE DATA SCALE', enemyIcon: '🐉', floating: 'BIG DATA HERO!', playerSprite: '👦', text: '<b>1) Company & Project:</b> Beyond the Gateway, Criteo required heavy Big Data usage to power business analytics tools.<br><br><b>2) The Challenge:</b> Ingesting and processing massive data streams from various traffic sources in real-time.<br><br><b>3) The Solution:</b> Built data pipelines utilizing Scala, Flink, and Kafka over Hadoop infrastructure. <i>Skills: Scala, Flink, Kafka, Hadoop.</i>', 
+              speechText: 'Still at Criteo, another massive challenge was handling real-time analytics data. I tackled this by building heavy data pipelines utilizing Scala, Flink, and Kafka over Hadoop.' },
 
-            // LEVEL 3: AVALOQ (Ragazzo)
+            // LEVEL 3: AVALOQ
             { type: 'walk', level: 'LEVEL 3: ZURICH', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', playerSprite: '🧑' },
-            { type: 'enemy', level: 'LEVEL 3: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Accounting)', date: '2021 - 2023', enemy: 'FINANCIAL COMPLIANCE', enemyIcon: '⚖️', floating: 'CRIT! DB DESIGN', playerSprite: '🧑', text: '<b>1) Company & Project:</b> In my first tenure at Avaloq (2021-2023), I was involved in the development of core accounting engines (BAL engine) for global banking operations handling massive transaction loads.<br><br><b>2) The Challenge:</b> Guaranteeing a highly robust balance and P&L accuracy with minimal possibility of errors, following strict international standards like IFRS and HGB.<br><br><b>3) The Solution:</b> Developed and optimized the core engine natively using PL/SQL on Oracle databases. <i>Skills: PL/SQL, Oracle DB, FinTech.</i>' },
+            { type: 'enemy', level: 'LEVEL 3: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Accounting)', date: '2021 - 2023', enemy: 'FINANCIAL COMPLIANCE', enemyIcon: '⚖️', floating: 'CRIT! DB DESIGN', playerSprite: '🧑', text: '<b>1) Company & Project:</b> In my first tenure at Avaloq (2021-2023), I was involved in the development of core accounting engines for global banking operations handling massive transaction loads.<br><br><b>2) The Challenge:</b> Guaranteeing a highly robust balance and P&L accuracy with minimal possibility of errors, following strict international standards like IFRS and HGB.<br><br><b>3) The Solution:</b> Developed and optimized the core engine natively using PL/SQL on Oracle databases. <i>Skills: PL/SQL, Oracle DB, FinTech.</i>', 
+              speechText: 'In 2021, I entered the fintech world with Avaloq in Zurich. My challenge was managing a core accounting engine with extreme accuracy to meet strict banking standards. I optimized it natively using PL SQL on Oracle databases.' },
 
-            // LEVEL 4: SYSDIG (Nerd)
+            // LEVEL 4: SYSDIG
             { type: 'walk', level: 'LEVEL 4: MILAN', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', playerSprite: '🤓' },
-            { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', enemy: 'runtime vulnerability scanning', enemyIcon: '🛸', floating: '-80% RAM!', playerSprite: '🤓', text: '<b>1) Company & Project:</b> Sysdig is a leader in cloud security. My mission focused on vulnerability scanning and runtime security in K8s and host filesystems.<br><br><b>2) The Challenge:</b> The existing runtime vulnerability scanning on K8s relied on a DaemonSet, consuming too many resources on clients\' clusters.<br><br><b>3) The Solution:</b> I designed and developed the equivalent solution as a ReplicaSet. This reduced the memory footprint of the scanning agents on the clusters by over 80%. I also developed highly parallelized, distributed systems analyzing runtime vulnerabilities for containers launched by various engines like Docker, Podman, CRI-O. <i>Skills: Go, Kubernetes, Parallel Programming, Distributed Systems.</i>' },
-            { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', enemy: 'MASSIVE SCALE BACKEND', enemyIcon: '💻', floating: 'REDIS UNLOCKED! 🛡️', playerSprite: '🤓', text: '<b>1) Company & Project:</b> The agents deployed on nodes send vulnerability data to the backend (SaaS or On-Prem), where analysis is centralized.<br><br><b>2) The Challenge:</b> Enterprise clients have clusters with thousands of nodes running thousands of containers. Creating a scalable and reliable system to process this massive incoming load was highly complex.<br><br><b>3) The Solution:</b> I followed the design and development of the backend system, building a highly scalable, eventually consistent distributed system. I leveraged Redis for high-speed caching and distributed locking to solve concurrency bottlenecks. <i>Skills: Redis, Distributed Locking, Eventual Consistency.</i>' },
+            { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', enemy: 'runtime vulnerability scanning', enemyIcon: '🛸', floating: '-80% RAM!', playerSprite: '🤓', text: '<b>1) Company & Project:</b> Sysdig is a leader in cloud security. My mission focused on vulnerability scanning and runtime security in Kubernetes and host filesystems.<br><br><b>2) The Challenge:</b> The existing runtime vulnerability scanning on Kubernetes relied on a DaemonSet, consuming too many resources on clients clusters.<br><br><b>3) The Solution:</b> I designed and developed the equivalent solution as a ReplicaSet. This reduced the memory footprint of the scanning agents on the clusters by over 80%. I also developed highly parallelized, distributed systems analyzing runtime vulnerabilities for containers launched by various engines like Docker, Podman, CRI-O. <i>Skills: Go, Kubernetes, Parallel Programming, Distributed Systems.</i>', 
+              speechText: 'In 2023, back in Milan, I joined the cloud security leader Sysdig. To optimize resource usage on client clusters, I redesigned the scanning agents, successfully reducing the memory footprint by over eighty percent using Go and Kubernetes.' },
+            { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', enemy: 'MASSIVE SCALE BACKEND', enemyIcon: '💻', floating: 'REDIS UNLOCKED! 🛡️', playerSprite: '🤓', text: '<b>1) Company & Project:</b> The agents deployed on nodes send vulnerability data to the backend, where analysis is centralized.<br><br><b>2) The Challenge:</b> Enterprise clients have clusters with thousands of nodes running thousands of containers. Creating a scalable and reliable system to process this massive incoming load was highly complex.<br><br><b>3) The Solution:</b> I followed the design and development of the backend system, building a highly scalable, eventually consistent distributed system. I leveraged Redis for high-speed caching and distributed locking to solve concurrency bottlenecks. <i>Skills: Redis, Distributed Locking, Eventual Consistency.</i>', 
+              speechText: 'Still at Sysdig, thousands of nodes sent massive amounts of data to the backend. To solve this scalability challenge, I built an eventually consistent system leveraging Redis for distributed locking and caching.' },
             
-            // LEVEL 5: AVALOQ (Nerd)
+            // LEVEL 5: AVALOQ
             { type: 'walk', level: 'LEVEL 5: ZURICH', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', playerSprite: '🤓' },
-            { type: 'enemy', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', enemy: 'TAX REPORTING ENGINE', enemyIcon: '👹', floating: 'SQL OPTIMIZED!', playerSprite: '🤓', text: '<b>1) Company & Project:</b> Avaloq provides core banking software. I work as a Software Engineer in the Tax and Legal Reporting team. Beyond standard reporting, our system handles the actual management of tax orders for major banks. <i>I was entrusted with the ownership of some of the most used and legacy calculation engines in the system, specifically the German tax engine.</i><br><br><b>2) The Challenge:</b> The difficulty lies in building an incredibly robust system with minimal possibility of errors. Given the enormous volume of data, it is technically necessary to have highly performant and scalable code and queries.<br><br><b>3) The Solution:</b> I ensure performance by designing optimized databases and writing highly scalable PL/SQL code to handle the massive load. <i>Skills: DB Design, Query Optimization, PL/SQL, Scalability.</i>' },
+            { type: 'enemy', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', enemy: 'TAX REPORTING ENGINE', enemyIcon: '👹', floating: 'SQL OPTIMIZED!', playerSprite: '🤓', text: '<b>1) Company & Project:</b> Avaloq provides core banking software. I work as a Software Engineer in the Tax and Legal Reporting team. Beyond standard reporting, our system handles the actual management of tax orders for major banks. <i>I was entrusted with the ownership of some of the most used and legacy calculation engines in the system, specifically the German tax engine.</i><br><br><b>2) The Challenge:</b> The difficulty lies in building an incredibly robust system with minimal possibility of errors. Given the enormous volume of data, it is technically necessary to have highly performant and scalable code and queries.<br><br><b>3) The Solution:</b> I ensure performance by designing optimized databases and writing highly scalable PL/SQL code to handle the massive load. <i>Skills: DB Design, Query Optimization, PL/SQL, Scalability.</i>', 
+              speechText: 'In 2025, I returned to Avaloq in Zurich. I now own highly critical legacy calculation engines for major banks. My daily challenge is ensuring maximum performance by designing optimized databases and scalable PL SQL code.' },
 
             // FINALE
-            { type: 'final', level: '🏆 QUEST COMPLETED!', flag: '🏁', bg: 'linear-gradient(to bottom, #1e1b4b, #2e1065)', icon: '🏆', comp: 'F. FERESINI', date: 'HIRED!', playerSprite: '🤓', text: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies, programming languages, business domains, and complex technical challenges. <br><br><b>This journey has honed my ability to quickly master new tech stacks, adapt to unfamiliar problems, and seamlessly translate my technical expertise across entirely different industries. Click the icon in the top right 📝 to view my full CV!</b>' }
+            { type: 'final', level: '🏆 QUEST COMPLETED!', flag: '🏁', bg: 'linear-gradient(to bottom, #1e1b4b, #2e1065)', icon: '🏆', comp: 'F. FERESINI', date: 'HIRED!', playerSprite: '🤓', text: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies, programming languages, business domains, and complex technical challenges. <br><br><b>This journey has honed my ability to quickly master new tech stacks, adapt to unfamiliar problems, and seamlessly translate my technical expertise across entirely different industries. Click the icon in the top right to view my full CV!</b>', 
+              speechText: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies and complex challenges. Click the icon in the top right to view my full CV!' }
         ];
 
         const game = {
@@ -600,6 +684,7 @@
             landmarkX: 0, 
             xp: 5,
             totalEnemies: 7, 
+            isVoiceEnabled: false, 
 
             dom: {
                 view: document.getElementById('game-view'),
@@ -616,6 +701,7 @@
                 btn: document.getElementById('main-action-btn'),
                 modal: document.getElementById('inventory-modal'),
                 invIcon: document.getElementById('inventory-icon'),
+                voiceIcon: document.getElementById('voice-icon'),
                 ground: document.getElementById('ground'),
                 xpFill: document.getElementById('xp-fill'),
                 xpText: document.getElementById('xp-text'),
@@ -626,6 +712,28 @@
                 document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
                 this.render();
                 this.updateXPBar();
+            },
+
+            // RUMORE DI ATTACCO ARCADE 8-BIT (Generato al volo)
+            playArcadeAttackSound() {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+
+                    oscillator.type = 'square'; // Tipico chip audio arcade
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); // Frequenza di partenza alta
+                    oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.15); // Discesa rapida
+
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15); // Fade out
+
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.15);
+                } catch(e) { /* Fallback silenzioso se le policy del browser bloccano l'audio */ }
             },
 
             handleAction() {
@@ -658,6 +766,10 @@
                 const view = this.dom.view;
                 const current = gameScript[this.stepIndex];
                 
+                // 3) Interrompe la voce ed esegue il suono arcade
+                speechSynthesis.cancel();
+                this.playArcadeAttackSound();
+
                 p.style.animation = "none"; 
                 p.classList.add('attacking');
                 p.innerText = "⚔️" + this.currentPlayerSprite;
@@ -771,6 +883,67 @@
                 this.dom.modal.classList.toggle('open');
             },
 
+            // LOGICA DI COSTRUZIONE DELLA TIMELINE ICONICA (Stupiscimi!)
+            updateTimeline(index) {
+                const timelineStates = [
+                    ['t0'], // 0 (Intro)
+                    ['t0', 'l1'], // 1 (Walk)
+                    ['t0', 'l1', 't1'], // 2 (Alten)
+                    ['t0', 'l1', 't1', 'l2'], // 3 (Walk)
+                    ['t0', 'l1', 't1', 'l2', 't2'], // 4 (Criteo 1)
+                    ['t0', 'l1', 't1', 'l2', 't2'], // 5 (Criteo 2)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3'], // 6 (Walk)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3'], // 7 (Avaloq 1)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4'], // 8 (Walk)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4'], // 9 (Sysdig 1)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4'], // 10 (Sysdig 2)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4', 'l5'], // 11 (Walk)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4', 'l5', 't5'], // 12 (Avaloq 2)
+                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4', 'l5', 't5', 'l6', 't6'] // 13 (Finale)
+                ];
+                
+                const activeElements = timelineStates[index] || [];
+                
+                for(let i=0; i<=6; i++) {
+                    const node = document.getElementById(`t${i}`);
+                    if(node) {
+                        if(activeElements.includes(`t${i}`)) node.classList.add('active');
+                        else node.classList.remove('active');
+                    }
+                    
+                    const line = document.getElementById(`l${i}`);
+                    if(line) {
+                        if(activeElements.includes(`l${i}`)) line.classList.add('active');
+                        else line.classList.remove('active');
+                    }
+                }
+            },
+
+            speak(text) {
+                if (!this.isVoiceEnabled) return;
+                
+                speechSynthesis.cancel(); 
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; 
+                utterance.rate = 1.0; 
+                utterance.pitch = 1.0;
+                
+                speechSynthesis.speak(utterance);
+            },
+
+            toggleVoice() {
+                this.isVoiceEnabled = !this.isVoiceEnabled;
+                if(this.isVoiceEnabled) {
+                    this.dom.voiceIcon.innerText = "🔊";
+                    const currentScript = gameScript[this.stepIndex].speechText;
+                    if(currentScript) this.speak(currentScript);
+                } else {
+                    this.dom.voiceIcon.innerText = "🔇";
+                    speechSynthesis.cancel();
+                }
+            },
+
             render() {
                 const state = gameScript[this.stepIndex];
                 
@@ -781,7 +954,13 @@
                 this.dom.date.innerText = state.date !== undefined ? state.date : '';
                 this.dom.text.innerHTML = state.text !== undefined ? state.text : '';
 
-                // Gestione evoluzione personaggio
+                // Aggiorna la timeline visiva
+                this.updateTimeline(this.stepIndex);
+
+                if (state.speechText) {
+                    this.speak(state.speechText);
+                }
+
                 if (state.type !== 'final') {
                     this.dom.player.classList.remove('victory-dance');
                 }
