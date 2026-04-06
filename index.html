@@ -29,7 +29,7 @@
             padding: 5px;
         }
 
-        /* --- GAME VIEW (Top Part) --- */
+        /* --- GAME VIEW --- */
         #game-view {
             width: 100%;
             height: 38%; 
@@ -39,6 +39,7 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
             transition: background 1s ease;
+            background: #0d1117;
         }
 
         #level-banner {
@@ -52,18 +53,12 @@
             align-items: center;
         }
 
-        .flag-icon {
-            font-size: 14px;
-            margin-left: 5px;
-        }
-
         #landmark {
             position: absolute;
             bottom: 30px;
             right: 15px;
             font-size: 50px;
             opacity: 0.15;
-            transform: translateX(0);
             z-index: 2;
         }
 
@@ -74,28 +69,20 @@
             z-index: 20;
             display: flex;
             gap: 10px;
-            align-items: center;
         }
 
-        .top-ui-icon {
+        .top-ui-icon { font-size: 16px; cursor: pointer; }
+
+        .cloud {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.2);
             font-size: 20px;
-            cursor: pointer;
-            transition: transform 0.2s;
+            z-index: 1;
+            animation: move-cloud linear infinite;
         }
-        .top-ui-icon:active { transform: scale(1.2); }
-
-        @keyframes bump-icon {
-            0% { transform: scale(1); }
-            10% { transform: scale(1.4); }
-            20% { transform: scale(1); }
-            30% { transform: scale(1.3); }
-            40% { transform: scale(1); }
-            100% { transform: scale(1); }
-        }
-
-        .bump-invoker {
-            animation: bump-icon 1.5s ease-out infinite !important;
-            filter: drop-shadow(0 0 5px #fbbf24);
+        @keyframes move-cloud {
+            0% { transform: translateX(400px); }
+            100% { transform: translateX(-100px); }
         }
 
         /* --- TIMELINE --- */
@@ -106,90 +93,26 @@
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            justify-content: center;
             z-index: 15;
-            font-family: var(--pixel-font);
-            width: auto;
             background: rgba(0, 0, 0, 0.4);
             padding: 4px 8px;
             border-radius: 12px;
             border: 1px solid #374151;
         }
         .t-node {
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             background: #1f2937;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #4b5563;
             font-size: 10px;
             border: 1px solid #4b5563;
-            transition: all 0.3s ease;
             opacity: 0.4;
         }
-        .t-node.active {
-            background: #111827;
-            border-color: #fbbf24;
-            opacity: 1;
-            transform: scale(1.1);
-            box-shadow: 0 0 4px #fbbf24;
-        }
-        .t-line {
-            width: 10px;
-            height: 2px;
-            background: #374151;
-            transition: background 0.3s ease;
-        }
-        .t-line.active {
-            background: #22c55e;
-        }
-
-        #nerd-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            display: none; 
-        }
-        .matrix-text {
-            position: absolute;
-            color: #00ff00;
-            font-family: monospace;
-            font-size: 10px;
-            opacity: 0.3;
-            animation: matrix-fall linear infinite;
-        }
-        @keyframes matrix-fall {
-            0% { transform: translateY(-20px); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
-            100% { transform: translateY(150px); opacity: 0; }
-        }
-
-        .clouds-container {
-            position: absolute;
-            top: 55px;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .cloud {
-            position: absolute;
-            font-size: 24px;
-            opacity: 0.25;
-            animation: move-clouds linear infinite;
-        }
-
-        @keyframes move-clouds {
-            from { transform: translateX(400px); }
-            to { transform: translateX(-50px); }
-        }
+        .t-node.active { border-color: #fbbf24; opacity: 1; box-shadow: 0 0 4px #fbbf24; }
+        .t-line { width: 10px; height: 2px; background: #374151; }
+        .t-line.active { background: #22c55e; }
 
         .ground {
             position: absolute;
@@ -209,7 +132,17 @@
             font-size: 30px;
             z-index: 5;
             animation: idle-breathe 1s ease-in-out infinite alternate;
-            transition: transform 0.2s ease, opacity 0.3s ease;
+            transition: left 0.8s ease, bottom 0.8s ease, transform 0.3s ease;
+        }
+
+        /* Effetto evoluzione smooth al volo */
+        #player-sprite {
+            display: inline-block;
+            transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+        }
+        .evolving {
+            transform: scale(1.6) rotate(10deg);
+            opacity: 0.5;
         }
 
         #enemy {
@@ -219,13 +152,15 @@
             font-size: 28px;
             text-align: center;
             opacity: 0;
-            transform: translateX(200px); 
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.1, 0.7, 0.1, 1);
+            transform: translate(250px, 0); 
+            transition: all 0.6s cubic-bezier(0.1, 0.7, 0.1, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 5;
         }
+
+        #enemy.active { opacity: 1; transform: translate(-50%, 0); }
 
         #enemy-label {
             font-size: 6px;
@@ -235,37 +170,56 @@
             border-radius: 4px;
             color: white;
             margin-bottom: 4px;
+            text-transform: uppercase;
         }
 
-        #hp-bar {
-            width: 40px;
-            height: 5px;
-            background: #4b5563;
-            border: 1px solid #fff;
-            margin-bottom: 5px;
-            overflow: hidden;
+        #hp-bar { width: 40px; height: 5px; background: #4b5563; border: 1px solid #fff; margin-bottom: 5px; overflow: hidden; display: none; }
+        #hp-fill { width: 100%; height: 100%; background: #ef4444; transition: width 0.2s ease; }
+
+        .projectile {
+            position: absolute;
+            font-size: 20px;
+            z-index: 10;
+            transition: all 0.3s linear;
         }
 
-        #hp-fill {
-            width: 100%;
-            height: 100%;
-            background: #ef4444;
-            transition: width 0.2s ease;
+        /* Effetto polvere */
+        .dust-particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 4;
+            animation: drift-up 0.6s ease-out forwards;
+        }
+        @keyframes drift-up {
+            0% { transform: translateY(0) scale(0.5); opacity: 0.6; }
+            100% { transform: translateY(-20px) translateX(-10px) scale(1.5); opacity: 0; }
         }
 
-        /* --- CV INTERFACE (Bottom Part) --- */
+        /* Coriandoli finale */
+        .confetti {
+            position: absolute;
+            width: 5px; height: 5px;
+            z-index: 50;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10px) rotate(0deg); }
+            100% { transform: translateY(250px) rotate(360deg); }
+        }
+
+        /* --- CV INTERFACE --- */
         #cv-interface {
             width: 100%;
             height: 62%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             padding-top: 8px;
         }
 
         #xp-container {
-            width: 100%;
-            height: 12px;
+            width: 100%; height: 12px;
             background: #1f2937;
             border: 2px solid #4b5563;
             border-radius: 6px;
@@ -274,22 +228,8 @@
             overflow: hidden;
         }
 
-        #xp-fill {
-            width: 5%;
-            height: 100%;
-            background: linear-gradient(to right, #10b981, #34d399);
-            transition: width(0.6s) cubic-bezier(0.1, 0.7, 0.1, 1);
-        }
-
-        #xp-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 5px;
-            color: #fff;
-            font-family: var(--pixel-font);
-        }
+        #xp-fill { width: 5%; height: 100%; background: linear-gradient(to right, #10b981, #34d399); transition: width 0.4s; }
+        #xp-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5px; }
 
         #dialog-box {
             width: 100%;
@@ -298,479 +238,204 @@
             border-radius: 8px;
             padding: 10px;
             flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
             margin-bottom: 6px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         #company-header { 
             color: var(--ui-color);
             font-size: 9px; 
             margin-bottom: 8px; 
-            text-transform: uppercase;
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #374151;
             padding-bottom: 4px;
         }
         
-        #company-name { font-weight: bold; }
-        #job-date { color: #9ca3af; font-size: 8px; }
-        
-        #cv-text { 
-            font-size: 8px; 
-            line-height: 1.6; 
-            color: #ffffff; 
-            overflow-y: auto; 
-            text-align: left;
-        }
-
+        #cv-text { font-size: 8px; line-height: 1.6; overflow-y: auto; text-align: left; flex-grow: 1; }
         #cv-text b { color: var(--ui-color); } 
         #cv-text i { color: var(--skill-color); } 
 
-        /* Modificato: Supporto per due pulsanti */
         #action-btn-container {
-            width: 100%;
-            height: 70px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            padding: 0 5px;
+            width: 100%; height: 70px;
+            display: flex; justify-content: space-between;
+            gap: 10px; padding: 0 5px;
         }
 
         #main-action-btn, #secondary-btn {
-            height: 55px;
-            font-family: var(--pixel-font);
-            font-size: 9px;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: transform 0.1s;
+            height: 55px; font-family: var(--pixel-font);
+            font-size: 9px; color: white; border: none; border-radius: 12px;
+            cursor: pointer; transition: transform 0.1s;
         }
 
-        #main-action-btn {
-            flex: 2;
-            background-color: var(--ui-color);
-            box-shadow: 0 5px 0 #3730a3;
+        #main-action-btn { flex: 2; background-color: var(--ui-color); box-shadow: 0 5px 0 #3730a3; }
+        #secondary-btn { flex: 1; background-color: #4b5563; box-shadow: 0 5px 0 #1f2937; }
+        #main-action-btn:active, #secondary-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 inherit; }
+
+        .custom-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 100; padding: 20px; overflow-y: auto;
         }
-
-        #secondary-btn {
-            flex: 1;
-            background-color: #4b5563;
-            box-shadow: 0 5px 0 #1f2937;
-        }
-
-        #main-action-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 inherit;
-        }
-
-        #secondary-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 inherit;
-        }
-
-        /* --- INVENTORY MODAL --- */
-        #inventory-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            z-index: 100;
-            padding: 15px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #inventory-modal.open { display: flex; }
-
-        #pdf-paper {
-            background-color: #f8fafc;
-            color: #1e293b;
-            width: 100%;
-            max-width: 450px;
-            height: 85vh;
-            border-radius: 4px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            font-family: 'Arial', sans-serif;
-            overflow-y: auto;
-        }
-
-        #pdf-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid #0f172a;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        #pdf-title h1 { font-size: 16px; text-transform: uppercase; color: #0f172a; margin-bottom: 3px;}
-        #pdf-title p { font-size: 10px; color: #64748b; }
-        #close-modal { font-family: var(--pixel-font); font-size: 12px; color: #ef4444; cursor: pointer; }
-
-        .pdf-section { margin-bottom: 15px; }
-        .pdf-section h2 { font-size: 11px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; margin-bottom: 8px; color: #0f172a; text-transform: uppercase;}
         
-        .pdf-job { margin-bottom: 10px; font-size: 10px; }
-        .pdf-job-header { display: flex; justify-content: space-between; font-weight: bold; color: #334155;}
-        
-        .skills-container { display: flex; flex-wrap: wrap; gap: 5px; }
-        .pdf-skill-badge {
-            font-size: 9px;
-            background-color: #e2e8f0;
-            color: #0f172a;
-            padding: 3px 6px;
-            border-radius: 3px;
-            border: 1px solid #cbd5e1;
+        .modal-content.white-cv {
+            background: #ffffff; border: 4px solid #111827; border-radius: 8px;
+            padding: 20px; font-size: 7px; line-height: 1.8; position: relative; color: #111827;
         }
+        .white-cv .close-modal { float: right; cursor: pointer; color: #ef4444; font-size: 14px; }
+        .white-cv h2 { color: #111827; text-align: center; margin-bottom: 5px; }
+        .white-cv .cv-section { margin-bottom: 15px; }
+        .white-cv .cv-section-title { color: #6366f1; font-size: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin-bottom: 8px; }
+        .white-cv .cv-item { margin-bottom: 10px; }
+        .white-cv .cv-item-header { display: flex; justify-content: space-between; color: #1f2937; font-weight: bold; }
+        .white-cv .cv-item-header span:last-child { color: #6b7280; font-size: 6px; }
 
-        /* --- ANIMAZIONI --- */
-        @keyframes idle-breathe {
-            0% { transform: scaleY(1); }
-            100% { transform: scaleY(0.92) translateY(2px); }
+        .modal-content.dark-modal {
+            background: #111827; border: 3px solid #6366f1; border-radius: 8px;
+            padding: 15px; font-size: 7px; line-height: 1.8; position: relative; color: #fff;
         }
+        .dark-modal .close-modal { float: right; cursor: pointer; color: #ef4444; font-size: 14px; }
 
-        @keyframes walk { 
-            0% { transform: translateY(0) rotate(0deg); } 
-            50% { transform: translateY(-8px) rotate(6deg); }
-            100% { transform: translateY(0) rotate(-6deg); } 
-        }
-
-        @keyframes scroll-ground {
-            0% { background-position: 0 0; }
-            100% { background-position: -30px 0; }
-        }
-
-        .projectile {
-            position: absolute;
-            font-size: 20px;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        @keyframes screen-shake {
-            0%, 100% { transform: translate(0, 0); }
-            20% { transform: translate(-4px, -3px); }
-            40% { transform: translate(4px, 3px); }
-            60% { transform: translate(-4px, 2px); }
-            80% { transform: translate(3px, -1px); }
-        }
-
-        @keyframes float-damage {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-45px); opacity: 0; }
-        }
-
-        @keyframes absorb-skill {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            35% { transform: translate(-65px, -45px) scale(1.1); opacity: 1; }
-            100% { transform: translate(-130px, 10px) scale(0.4); opacity: 0; }
-        }
-
-        @keyframes level-up-anim {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
-            70% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1); opacity: 0; }
-        }
-
-        @keyframes evolve {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.8) rotate(15deg); filter: brightness(2) drop-shadow(0 0 15px #fbbf24); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes victory-jump {
-            0% { transform: translate(0, 0); }
-            20% { transform: translate(0, -50px) scale(1.2); }
-            40% { transform: translate(0, 0) scale(1); }
-            60% { transform: translate(0, -30px) scale(1.1); }
-            80% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(0, 0); }
-        }
-
-        @keyframes confetti-fall {
-            0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(150px) translateX(20px) rotate(360deg); opacity: 0; }
-        }
-
+        @keyframes idle-breathe { 0% { transform: scaleY(1); } 100% { transform: scaleY(0.92) translateY(2px); } }
+        @keyframes walk { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
+        @keyframes scroll-ground { 0% { background-position: 0 0; } 100% { background-position: -30px 0; } }
         .walking { animation: walk 0.4s infinite !important; }
         .scrolling-ground { animation: scroll-ground 0.4s linear infinite; }
-        .shaking { animation: screen-shake 0.3s linear; }
-        .evolving { animation: evolve 0.6s ease-out !important; }
-        .victory-dance { animation: victory-jump 2s ease-out infinite !important; }
+        .victory-dance { animation: walk 0.4s infinite !important; }
 
-        .damage-text {
-            position: absolute;
-            color: #ffff00;
-            font-family: var(--pixel-font);
-            font-size: 8px;
-            pointer-events: none;
-            z-index: 30;
-            animation: float-damage 0.8s ease-out forwards;
-            text-shadow: 2px 2px 0px #000;
-        }
-
-        .skill-learned {
-            position: absolute;
-            font-size: 6px;
-            white-space: nowrap;
-            background: var(--skill-color);
-            padding: 3px 5px;
-            border-radius: 4px;
-            color: white;
-            font-family: var(--pixel-font);
-            pointer-events: none;
-            z-index: 30;
-            animation: absorb-skill 1s ease-in-out forwards;
-        }
-
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            z-index: 25;
-            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-        }
-
-        .confetti {
-            position: absolute;
-            font-size: 14px;
-            z-index: 4;
-            pointer-events: none;
-            animation: confetti-fall 2.5s ease-out forwards;
-        }
-
-        #level-up-overlay {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--pixel-font);
-            font-size: 16px;
-            color: #fbbf24;
-            text-shadow: 3px 3px 0px #000;
-            z-index: 50;
-            display: none;
-            pointer-events: none;
-        }
-
+        .damage-text { position: absolute; color: #ffff00; font-size: 8px; z-index: 30; animation: float-damage 0.8s ease-out forwards; }
+        @keyframes float-damage { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-45px); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="game-view" style="background: linear-gradient(to bottom, #111827, #1e293b);">
+    <div id="game-view">
         <div id="level-banner">LOADING...</div>
         <div id="landmark">🏔️</div>
         
-        <div id="nerd-overlay"></div>
-        
+        <div class="cloud" style="top: 10px; animation-duration: 15s;">☁️</div>
+        <div class="cloud" style="top: 25px; animation-duration: 25s; font-size: 14px;">☁️</div>
+
         <div id="timeline">
-            <span class="t-node" id="t0" title="Graduation">🎓</span>
-            <span class="t-line" id="l1"></span>
-            <span class="t-node" id="t1" title="Alten/Amadeus">🚄</span>
-            <span class="t-line" id="l2"></span>
-            <span class="t-node" id="t2" title="Criteo">📡</span>
-            <span class="t-line" id="l3"></span>
-            <span class="t-node" id="t3" title="Avaloq Core">🏦</span>
-            <span class="t-line" id="l4"></span>
-            <span class="t-node" id="t4" title="Sysdig Security">🛡️</span>
-            <span class="t-line" id="l5"></span>
-            <span class="t-node" id="t5" title="Avaloq Tax">📊</span>
-            <span class="t-line" id="l6"></span>
-            <span class="t-node" id="t6" title="End Game">🏁</span>
+            <span class="t-node" id="t0">🎓</span><span class="t-line" id="l1"></span>
+            <span class="t-node" id="t1">🚄</span><span class="t-line" id="l2"></span>
+            <span class="t-node" id="t2">📡</span><span class="t-line" id="l3"></span>
+            <span class="t-node" id="t3">🏦</span><span class="t-line" id="l4"></span>
+            <span class="t-node" id="t4">🛡️</span><span class="t-line" id="l5"></span>
+            <span class="t-node" id="t5">🏁</span>
         </div>
 
         <div id="icons-container">
+            <div id="cv-btn" class="top-ui-icon" onclick="game.toggleModal('cv')">📄</div>
             <div id="voice-icon" class="top-ui-icon" onclick="game.toggleVoice()">🔇</div>
-            <div id="inventory-icon" class="top-ui-icon" onclick="game.toggleInventory()">📝</div>
-        </div>
-        
-        <div class="clouds-container">
-            <div class="cloud" style="top: 0px; animation-duration: 20s;">☁️</div>
-            <div class="cloud" style="top: 15px; animation-duration: 35s; animation-delay: -5s;">☁️</div>
-            <div class="cloud" style="top: 5px; animation-duration: 12s; animation-delay: -8s;">☁️</div>
+            <div id="bgm-icon" class="top-ui-icon" onclick="game.toggleBgm()">🎵</div>
         </div>
 
-        <div id="player">💻</div>
+        <div id="player"><span id="player-sprite">🕹️</span></div>
         
         <div id="enemy">
             <div id="hp-bar"><div id="hp-fill"></div></div>
-            <div id="enemy-label">CHALLENGE</div>
+            <div id="enemy-label">LABEL</div>
             <div id="enemy-sprite">👾</div>
         </div>
-
-        <div id="level-up-overlay">LEVEL UP! 🌟</div>
-
         <div class="ground" id="ground"></div>
     </div>
 
     <div id="cv-interface">
-        <div id="xp-container">
-            <div id="xp-fill"></div>
-            <div id="xp-text">XP: 5 / 100</div>
-        </div>
-
+        <div id="xp-container"><div id="xp-fill"></div><div id="xp-text">XP: 5 / 100</div></div>
         <div id="dialog-box">
-            <div id="company-header">
-                <span id="company-name">Federico Feresini</span>
-                <span id="job-date">Software Engineer Profile</span>
-            </div>
-            <div id="cv-text">
-                Welcome to my interactive profile! Tap the button below to explore my career and discover the technical challenges I have solved.
-            </div>
+            <div id="company-header"><span id="company-name"></span><span id="job-date"></span></div>
+            <div id="cv-text"></div>
         </div>
-
         <div id="action-btn-container">
-            <button id="secondary-btn" onclick="game.handleSecondary()">VIEW CV</button>
-            <button id="main-action-btn" onclick="game.handleAction()">START ➡️</button>
+            <button id="secondary-btn" onclick="game.prev()">⬅️ BACK</button>
+            <button id="main-action-btn" onclick="game.handleAction()">NEXT</button>
         </div>
     </div>
 
-    <div id="inventory-modal">
-        <div id="pdf-paper">
-            <div id="pdf-header">
-                <div id="pdf-title">
-                    <h1>Federico Feresini</h1>
-                    <p>Software Engineer | Zurich, Switzerland</p>
-                </div>
-                <div id="close-modal" onclick="game.toggleInventory()">[X]</div>
+    <div id="cv-modal" class="custom-modal">
+        <div class="modal-content white-cv">
+            <span class="close-modal" onclick="game.toggleModal('cv')">[X]</span>
+            <h2>FEDERICO FERESINI</h2>
+            <p style="text-align: center; font-size: 6px; margin-bottom: 15px; color: #6b7280;">SOFTWARE ENGINEER</p>
+
+            <div class="cv-section">
+                <div class="cv-section-title">PROFESSIONAL EXPERIENCE</div>
+                <div class="cv-item"><div class="cv-item-header"><span>AVALOQ (Tax)</span><span>2025 - Present</span></div><p>Handling and securing critical bank tax engines using advanced PL/SQL.</p></div>
+                <div class="cv-item"><div class="cv-item-header"><span>SYSDIG (Agent & Backend)</span><span>2023 - 2025</span></div><p>K8s security scanning optimizations in Go and Redis architecture.</p></div>
+                <div class="cv-item"><div class="cv-item-header"><span>AVALOQ (Accounting)</span><span>2021 - 2023</span></div><p>Optimized core banking accounting systems via PL/SQL and Oracle DB.</p></div>
+                <div class="cv-item"><div class="cv-item-header"><span>CRITEO (Gateway & Big Data)</span><span>2019 - 2021</span></div><p>High-scale API Gateways in ASP.NET Core & Stream Processing with Scala, Flink, Kafka.</p></div>
+                <div class="cv-item"><div class="cv-item-header"><span>ALTEN (Amadeus)</span><span>2017 - 2019</span></div><p>Train data reconciliation using C++ and MongoDB.</p></div>
             </div>
-
-            <div class="pdf-section">
-                <h2>Experience</h2>
-                
-                <div class="pdf-job">
-                    <div class="pdf-job-header"><span>AVALOQ (Tax & Legal Reporting)</span><span>2025 - Present</span></div>
-                    <div style="color: #64748b; font-style: italic; margin-bottom: 3px;">Software Engineer</div>
-                    <ul style="margin-left: 15px; font-size: 9px; color: #334155;">
-                        <li>Ownership of critical legacy calculation engines, specifically managing German tax orders for major banks.</li>
-                        <li>Designed highly performant and scalable PL/SQL code and optimized databases to handle massive daily transaction loads.</li>
-                    </ul>
-                </div>
-
-                <div class="pdf-job">
-                    <div class="pdf-job-header"><span>SYSDIG (Agent & Backend)</span><span>2023 - 2025</span></div>
-                    <div style="color: #64748b; font-style: italic; margin-bottom: 3px;">Software Engineer</div>
-                    <ul style="margin-left: 15px; font-size: 9px; color: #334155;">
-                        <li>Redesigned Kubernetes runtime vulnerability scanning from DaemonSet to ReplicaSet, reducing memory footprint on client clusters by over 80%.</li>
-                        <li>Built a highly parallelized system analyzing container runtimes (Docker, Podman, CRI-O).</li>
-                        <li>Engineered a highly scalable backend with Redis for high-speed caching and distributed locking to eliminate concurrency bottlenecks.</li>
-                    </ul>
-                </div>
-
-                <div class="pdf-job">
-                    <div class="pdf-job-header"><span>AVALOQ (Core Accounting)</span><span>2021 - 2023</span></div>
-                    <div style="color: #64748b; font-style: italic; margin-bottom: 3px;">Software Engineer</div>
-                    <ul style="margin-left: 15px; font-size: 9px; color: #334155;">
-                        <li>Developed the core accounting engines for global banking operations under international standards (IFRS, HGB).</li>
-                        <li>Optimized native DB processing via advanced PL/SQL programming directly inside Oracle databases.</li>
-                    </ul>
-                </div>
-
-                <div class="pdf-job">
-                    <div class="pdf-job-header"><span>CRITEO (Gateway & Big Data)</span><span>2019 - 2021</span></div>
-                    <div style="color: #64748b; font-style: italic; margin-bottom: 3px;">Software Engineer</div>
-                    <ul style="margin-left: 15px; font-size: 9px; color: #334155;">
-                        <li>Developed a centralized API Gateway in ASP.NET Core handling rate limiting, routing, and authentication for automated campaign setups.</li>
-                        <li>Built heavy-lifting data ingestion pipelines utilizing Scala, Flink, and Kafka over Hadoop infrastructures.</li>
-                    </ul>
-                </div>
-
-                <div class="pdf-job">
-                    <div class="pdf-job-header"><span>ALTEN (Amadeus Rail)</span><span>2017 - 2019</span></div>
-                    <div style="color: #64748b; font-style: italic; margin-bottom: 3px;">C++ Software Engineer (Consultant)</div>
-                    <ul style="margin-left: 15px; font-size: 9px; color: #334155;">
-                        <li>Developed the backend 'entry' component for the European rail shopping engine, handling massive customer requests.</li>
-                        <li>Engineered logic to reconcile varied results from multiple international train providers, factoring in discounts, connections, and pricing.</li>
-                        <li>Developed C++ backend code and utilized MongoDB as a NoSQL cache for provider responses.</li>
-                    </ul>
-                </div>
+            <div class="cv-section">
+                <div class="cv-section-title">CORE SKILLS</div>
+                <p><b>Backend:</b> Go, C++, Scala, ASP.NET Core, PL/SQL</p>
+                <p><b>Infrastructure:</b> Kubernetes, Kafka, Redis, Hadoop</p>
             </div>
+        </div>
+    </div>
 
-            <div class="pdf-section">
-                <h2>Technical Skills</h2>
-                <div class="skills-container">
-                    <span class="pdf-skill-badge">Go</span>
-                    <span class="pdf-skill-badge">Kubernetes</span>
-                    <span class="pdf-skill-badge">C++</span>
-                    <span class="pdf-skill-badge">C#</span>
-                    <span class="pdf-skill-badge">ASP.NET Core</span>
-                    <span class="pdf-skill-badge">PL/SQL</span>
-                    <span class="pdf-skill-badge">Oracle DB</span>
-                    <span class="pdf-skill-badge">Scala</span>
-                    <span class="pdf-skill-badge">Kafka</span>
-                    <span class="pdf-skill-badge">Redis</span>
-                    <span class="pdf-skill-badge">Docker</span>
-                    <span class="pdf-skill-badge">MongoDB</span>
-                </div>
-            </div>
-
-            <div class="pdf-section">
-                <h2>Education</h2>
-                <div class="pdf-job">
-                    <div class="pdf-job-header"><span>Politecnico di Milano</span><span>Graduated</span></div>
-                    <div style="color: #64748b;">M.Sc. in Computer Science and Engineering</div>
-                </div>
-            </div>
+    <div id="contact-modal" class="custom-modal">
+        <div class="modal-content dark-modal">
+            <span class="close-modal" onclick="game.toggleModal('contact')">[X]</span>
+            <h2 style="color:#6366f1; margin-bottom:10px;">CONTACT ME</h2>
+            <p>Email: federico@example.com</p>
+            <p>LinkedIn: /in/federicoferesini</p>
         </div>
     </div>
 
     <script>
+        // Ho aggiornato la sfida criteo_api basandomi sui punti chiave descritti nell'articolo (Ecosystem, Gateway, EXAMs)
         const gameScript = [
-            // INTRO (Modificato: Scomparso il PC e la coppa, impostato come menu Arcade)
-            { type: 'text', level: 'MILAN, ITALY', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #0f172a, #1e293b)', icon: '👾', comp: 'F. FERESINI', date: 'PROFILE', playerSprite: '🕹️', text: '[ INSERT COIN ]<br><br>Welcome to my interactive resume. Select an option below to explore my career and discover the technical challenges I have solved.', 
-              speechText: 'Welcome to my interactive resume. Select an option below to proceed.' },
+            { type: 'text', challengeId: 'intro', level: 'MILAN, ITALY', flag: '🇮🇹', icon: '👾', comp: 'F. FERESINI', date: 'ARCADE', playerSprite: '🕹️', text: '[ INSERT COIN ]<br><br>I am a software engineer. Press NEXT to retrace my professional journey through different technical domains.', tNode: 0, bg: '#0d1117' },
             
-            // LEVEL 1: ALTEN / AMADEUS 
-            { type: 'walk', level: 'LEVEL 1: FRANCE', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #1c1917, #44403c)', icon: '🌴', playerSprite: '👶' },
-            { type: 'enemy', level: 'LEVEL 1: ALTEN', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #1c1917, #44403c)', icon: '🌴', comp: 'ALTEN (Amadeus)', date: '2017 - 2019', enemy: 'DATA RECONCILIATION', enemyIcon: '🚄', floating: 'C++ CODE! 💥', playerSprite: '👶', skills: ['C++', 'MongoDB', 'Backend Dev'], text: '<b>1) Company & Project:</b> Hired by Alten as a consultant for the Rail department at Amadeus. My team developed the backend for the "shopping" component, processing entry requests for European train travel.<br><br><b>2) The Challenge:</b> Reconciling different results from multiple train providers across Europe, considering complex variables like railcards, discounts, connections, and costs to return the best solutions.<br><br><b>3) The Solution:</b> Wrote backend C++ code and utilized MongoDB as a NoSQL cache to store provider results. <i>Skills: C++, MongoDB, Backend Dev.</i>', 
-              speechText: 'From 2017 to 2019, I worked in France as a consultant for Alten at Amadeus Rail. My challenge was to build the shopping component, reconciling travel results from multiple European providers. I wrote backend C plus plus and used Mongo DB as a cache.' },
-            
-            // LEVEL 2: CRITEO
-            { type: 'walk', level: 'LEVEL 2: PARIS', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', playerSprite: '👦' },
-            { type: 'enemy', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', comp: 'CRITEO (Gateway)', date: '2019 - 2021', enemy: 'MANUAL CAMPAIGNS', enemyIcon: '🎯', floating: 'GATEWAY UP!', playerSprite: '👦', skills: ['C#', '.NET Core', 'ASP.NET'], text: '<b>1) Company & Project:</b> Criteo is a leader in ad-tech. The company often had to forfeit small clients because managing campaigns required human support. To scale and empower small businesses to manage campaigns autonomously, teams developed custom customer-facing APIs.<br><br><b>2) The Challenge:</b> My team and I were tasked with building a robust entry point to securely expose these internal APIs to small businesses.<br><br><b>3) The Solution:</b> We developed a centralized API Gateway in ASP.NET Core that allowed API versioning, managed authentication and authorization, performed call routing, and handled rate limiting. <i>Skills: C#, ASP.NET Core, API Gateway, Rate Limiting.</i>', 
-              speechText: 'In 2019, I joined the tech leader Criteo in Paris. To help small businesses scale autonomously, my team was challenged to build a secure entry point for their campaigns. We created a highly scalable API Gateway in ASP.NET Core.' },
-            { type: 'enemy', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', bg: 'linear-gradient(to bottom, #581c87, #2e1065)', icon: '🗼', comp: 'CRITEO (Big Data)', date: '2019 - 2021', enemy: 'MASSIVE DATA SCALE', enemyIcon: '📊', floating: 'BIG DATA HERO!', playerSprite: '👦', skills: ['Scala', 'Kafka', 'Hadoop', 'Flink'], text: '<b>1) Company & Project:</b> Beyond the Gateway, Criteo required heavy Big Data usage to power business analytics tools.<br><br><b>2) The Challenge:</b> Ingesting and processing massive data streams from various traffic sources in real-time.<br><br><b>3) The Solution:</b> Built data pipelines utilizing Scala, Flink, and Kafka over Hadoop infrastructure. <i>Skills: Scala, Flink, Kafka, Hadoop.</i>', 
-              speechText: 'Still at Criteo, another massive challenge was handling real-time analytics data. I tackled this by building heavy data pipelines utilizing Scala, Flink, and Kafka over Hadoop.' },
+            { type: 'walk', challengeId: 'alten', level: 'LEVEL 1: FRANCE', flag: '🇫🇷', icon: '🌴', playerSprite: '👶', tNode: 1, bg: '#0a192f' },
+            { type: 'dialogue', challengeId: 'alten', level: 'LEVEL 1: ALTEN', flag: '🇫🇷', icon: '🌴', comp: 'ALTEN (Amadeus)', date: '2017 - 2019', speakerIcon: '👨‍✈️', playerSprite: '👶', text: 'Welcome to ALTEN! Here we partnered with Amadeus to manage massive sets of European train data.', label: '', tNode: 1, bg: '#0a192f' },
+            { type: 'enemy', challengeId: 'alten', level: 'LEVEL 1: ALTEN', flag: '🇫🇷', icon: '🌴', comp: 'ALTEN (Amadeus)', date: '2017 - 2019', enemyIcon: '🚄', playerSprite: '👶', text: '<b>The Project:</b> Aggregating train schedules across diverse European operators.<br><b>The Challenge:</b> Vendors sent data in inconsistent, proprietary formats. We needed high-speed unification.<br><b>The Solution:</b> Designed a C++ parsing engine and mapped data into a ultra-fast MongoDB cache.', label: 'DATA RECONCILIATION', tNode: 1, bg: '#0a192f' },
+            { type: 'dialogue', challengeId: 'alten', level: 'LEVEL 1: ALTEN', flag: '🇫🇷', icon: '🌴', comp: 'ALTEN (Amadeus)', date: '2017 - 2019', speakerIcon: '👨‍✈️', playerSprite: '👶', text: '<b>Detailed Solution:</b><br><br>The team developed a native processing engine in <i>C++</i>. This software utilized a high-performance model based on pointers and manual memory allocation to map proprietary unstructured strings into a canonical model. Then, to avoid overloading transactional databases, data was persisted onto a <i>MongoDB</i> distributed cluster, acting as an ultra-fast NoSQL cache for Amadeus booking systems.', label: '', tNode: 1, bg: '#0a192f' },
 
-            // LEVEL 3: AVALOQ
-            { type: 'walk', level: 'LEVEL 3: ZURICH', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', playerSprite: '🧑' },
-            // Modificato: L'emoji del nemico qui è diventata la bilancia ⚖️ (Accounting)
-            { type: 'enemy', level: 'LEVEL 3: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Accounting)', date: '2021 - 2023', enemy: 'FINANCIAL COMPLIANCE', enemyIcon: '⚖️', floating: 'CRIT! DB DESIGN', playerSprite: '🧑', skills: ['PL/SQL', 'Oracle DB', 'SQL'], text: '<b>1) Company & Project:</b> In my first tenure at Avaloq (2021-2023), I was involved in the development of core accounting engines for global banking operations handling massive transaction loads.<br><br><b>2) The Challenge:</b> Guaranteeing a highly robust balance and P&L accuracy with minimal possibility of errors, following strict international standards like IFRS and HGB.<br><br><b>3) The Solution:</b> Developed and optimized the core engine natively using PL/SQL on Oracle databases. <i>Skills: PL/SQL, Oracle DB.</i>', 
-              speechText: 'In 2021, I entered the fintech world with Avaloq in Zurich. My challenge was managing a core accounting engine with extreme accuracy to meet strict banking standards. I optimized it natively using PL SQL on Oracle databases.' },
+            { type: 'walk', challengeId: 'criteo_api', level: 'LEVEL 2: PARIS', flag: '🇫🇷', icon: '🗼', playerSprite: '👦', tNode: 2, bg: '#0a192f' },
+            { type: 'dialogue', challengeId: 'criteo_api', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', icon: '🗼', comp: 'CRITEO (Gateway)', date: '2019 - 2021', speakerIcon: '🤵', playerSprite: '👦', text: 'Welcome to Criteo! Let\'s breathe fresh life into a 10-year-old API platform by building a brand new ecosystem.', label: '', tNode: 2, bg: '#0a192f' },
+            { type: 'enemy', challengeId: 'criteo_api', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', icon: '🗼', comp: 'CRITEO (Gateway)', date: '2019 - 2021', enemyIcon: '🎯', playerSprite: '👦', text: '<b>The Project:</b> Building a centralized Gateway and modular API ecosystem.<br><b>The Challenge:</b> The old monolithic API was too unruly for multiple teams. We needed consistency, usability, and scale to serve millions of calls.<br><b>The Solution:</b> Built an ASP.NET Core Gateway that routes external traffic to decentralized backend microservices called EXAMs.', label: 'API ECOSYSTEM', tNode: 2, bg: '#0a192f' },
+            { type: 'dialogue', challengeId: 'criteo_api', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', icon: '🗼', comp: 'CRITEO (Gateway)', date: '2019 - 2021', speakerIcon: '🤵', playerSprite: '👦', text: '<b>Detailed Solution:</b><br><br>The ASP.NET Core Gateway acts as the single point of entry, providing stability and security. It handles traffic rate-limiting to block floods of malicious requests and forwards traffic to <i>EXAMs</i> (EXternal API Modules). This modular architecture allowed teams to independently manage and release their own specific domains like Campaigns or Reporting.', label: '', tNode: 2, bg: '#0a192f' },
 
-            // LEVEL 4: SYSDIG
-            { type: 'walk', level: 'LEVEL 4: MILAN', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', playerSprite: '🧔' },
-            { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', enemy: 'runtime vulnerability scanning', enemyIcon: '🛡️', floating: '-80% RAM!', playerSprite: '🧔', skills: ['Go', 'Kubernetes', 'Docker'], text: '<b>1) Company & Project:</b> Sysdig is a leader in cloud security. My mission focused on vulnerability scanning and runtime security in Kubernetes and host filesystems.<br><br><b>2) The Challenge:</b> The existing runtime vulnerability scanning on Kubernetes relied on a DaemonSet, consuming too many resources on clients clusters.<br><br><b>3) The Solution:</b> I designed and developed the equivalent solution as a ReplicaSet. This reduced the memory footprint of the scanning agents on the clusters by over 80%. I also developed highly parallelized, distributed systems analyzing runtime vulnerabilities for containers launched by various engines like Docker, Podman, CRI-O. <i>Skills: Go, Kubernetes, Parallel Programming, Distributed Systems.</i>', 
-              speechText: 'In 2023, back in Milan, I joined the cloud security leader Sysdig. To optimize resource usage on client clusters, I redesigned the scanning agents, successfully reducing the memory footprint by over eighty percent using Go and Kubernetes.' },
-            { type: 'enemy', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', bg: 'linear-gradient(to bottom, #1e3a8a, #0f172a)', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', enemy: 'MASSIVE SCALE BACKEND', enemyIcon: '🖥️', floating: 'REDIS UNLOCKED! 🛡️', playerSprite: '🧔', skills: ['Redis', 'Go', 'Distributed Sys'], text: '<b>1) Company & Project:</b> The agents deployed on nodes send vulnerability data to the backend, where analysis is centralized.<br><br><b>2) The Challenge:</b> Enterprise clients have clusters with thousands of nodes running thousands of containers. Creating a scalable and reliable system to process this massive incoming load was highly complex.<br><br><b>3) The Solution:</b> I followed the design and development of the backend system, building a highly scalable, eventually consistent distributed system. I leveraged Redis for high-speed caching and distributed locking to solve concurrency bottlenecks. <i>Skills: Redis, Distributed Locking, Eventual Consistency.</i>', 
-              speechText: 'Still at Sysdig, thousands of nodes sent massive amounts of data to the backend. To solve this scalability challenge, I built an eventually consistent system leveraging Redis for distributed locking and caching.' },
-            
-            // LEVEL 5: AVALOQ
-            { type: 'walk', level: 'LEVEL 5: ZURICH', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', playerSprite: '🧔' },
-            { type: 'enemy', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', bg: 'linear-gradient(to bottom, #064e3b, #022c22)', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', enemy: 'TAX REPORTING ENGINE', enemyIcon: '🏦', floating: 'SQL OPTIMIZED!', playerSprite: '🧔', skills: ['PL/SQL', 'Query Opt.', 'Oracle'], text: '<b>1) Company & Project:</b> Avaloq provides core banking software. I work as a Software Engineer in the Tax and Legal Reporting team. Beyond standard reporting, our system handles the actual management of tax orders for major banks. <i>I was entrusted with the ownership of some of the most used and legacy calculation engines in the system, specifically the German tax engine.</i><br><br><b>2) The Challenge:</b> The difficulty lies in building an incredibly robust system with minimal possibility of errors. Given the enormous volume of data, it is technically necessary to have highly performant and scalable code and queries.<br><br><b>3) The Solution:</b> I ensure performance by designing optimized databases and writing highly scalable PL/SQL code to handle the massive load. <i>Skills: DB Design, Query Optimization, PL/SQL, Scalability.</i>', 
-              speechText: 'In 2025, I returned to Avaloq in Zurich. I now own highly critical legacy calculation engines for major banks. My daily challenge is ensuring maximum performance by designing optimized databases and scalable PL SQL code.' },
+            { type: 'dialogue', challengeId: 'criteo_bd', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', icon: '🗼', comp: 'CRITEO (Big Data)', date: '2019 - 2021', speakerIcon: '👩‍🔬', playerSprite: '👦', text: 'Now let\'s dive into the Big Data realm where performance is measured in millions of operations per second.', label: '', tNode: 2, bg: '#0a192f' },
+            { type: 'enemy', challengeId: 'criteo_bd', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', icon: '🗼', comp: 'CRITEO (Big Data)', date: '2019 - 2021', enemyIcon: '📊', playerSprite: '👦', text: '<b>The Project:</b> Processing real-time advertising click and impression streams.<br><b>The Challenge:</b> Real-time analysis was critical; delays would make dynamic ad matching obsolete.<br><b>The Solution:</b> Used Scala and Apache Flink for in-flight calculations, pushing storage into Hadoop.', label: 'MASSIVE DATA SCALE', tNode: 2, bg: '#0a192f' },
+            { type: 'dialogue', challengeId: 'criteo_bd', level: 'LEVEL 2: CRITEO', flag: '🇫🇷', icon: '🗼', comp: 'CRITEO (Big Data)', date: '2019 - 2021', speakerIcon: '👩‍🔬', playerSprite: '👦', text: '<b>Detailed Solution:</b><br><br>Leveraging the "stream processing" paradigm, we developed <i>Scala</i> applications running on <i>Apache Flink</i> clusters. Messages (clicks/impressions) were extracted in real-time from partitioned <i>Kafka</i> topics. Flink performed sliding window aggregations, calculating financial KPIs in milliseconds and offloading raw historical data into <i>Hadoop (HDFS)</i> distributed file systems.', label: '', tNode: 2, bg: '#0a192f' },
 
-            // FINALE
-            { type: 'final', level: '🏆 QUEST COMPLETED!', flag: '🏁', bg: 'linear-gradient(to bottom, #1e1b4b, #2e1065)', icon: '🏆', comp: 'F. FERESINI', date: 'HIRED!', playerSprite: '🧔', text: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies, programming languages, business domains, and complex technical challenges. <br><br><b>This journey has honed my ability to quickly master new tech stacks, adapt to unfamiliar problems, and seamlessly translate my technical expertise across entirely different industries. Click the icon in the top right to view my full CV!</b>', 
-              speechText: 'Thank you for playing! Throughout my career, I have navigated a diverse landscape of technologies and complex challenges. Click the icon in the top right to view my full CV!' }
+            { type: 'walk', challengeId: 'avaloq_acc', level: 'LEVEL 3: ZURICH', flag: '🇨🇭', icon: '🏔️', playerSprite: '🧑', tNode: 3, bg: '#2d0a0a' },
+            { type: 'dialogue', challengeId: 'avaloq_acc', level: 'LEVEL 3: AVALOQ', flag: '🇨🇭', icon: '🏔️', comp: 'AVALOQ (Accounting)', date: '2021 - 2023', speakerIcon: '🕵️‍♂️', playerSprite: '🧑', text: 'Welcome to Avaloq! We develop core banking solutions for international institutes.', label: '', tNode: 3, bg: '#2d0a0a' },
+            { type: 'enemy', challengeId: 'avaloq_acc', level: 'LEVEL 3: AVALOQ', flag: '🇨🇭', icon: '🏔️', comp: 'AVALOQ (Accounting)', date: '2021 - 2023', enemyIcon: '⚖️', playerSprite: '🧑', text: '<b>The Project:</b> Modernizing multi-currency ledger accounting formulas.<br><b>The Challenge:</b> Legacy procedures were failing strict end-of-day SLAs due to computation times.<br><b>The Solution:</b> Leveraged optimized PL/SQL on Oracle clusters with dynamic caching and bulk loads.', label: 'FINANCIAL COMPLIANCE', tNode: 3, bg: '#2d0a0a' },
+            { type: 'dialogue', challengeId: 'avaloq_acc', level: 'LEVEL 3: AVALOQ', flag: '🇨🇭', icon: '🏔️', comp: 'AVALOQ (Accounting)', date: '2021 - 2023', speakerIcon: '🕵️‍♂️', playerSprite: '🧑', text: '<b>Detailed Solution:</b><br><br>We rewrote large portions of legacy monolithic code by leveraging advanced <i>Oracle</i> database features. Using <i>PL/SQL</i> constructs like BULK COLLECT and FORALL, we minimized expensive context switches between the SQL and PL/SQL engines. This, combined with the surgical use of indexed global temporary tables, reduced nightly computation times by 70%.', label: '', tNode: 3, bg: '#2d0a0a' },
+
+            { type: 'walk', challengeId: 'sysdig_ag', level: 'LEVEL 4: MILAN', flag: '🇮🇹', icon: '⛪', playerSprite: '🧔', tNode: 4, bg: '#0a2d16' },
+            { type: 'dialogue', challengeId: 'sysdig_ag', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', speakerIcon: '👨‍💼', playerSprite: '🧔', text: 'Welcome to Sysdig! We secure Kubernetes clusters for massive infrastructures.', label: '', tNode: 4, bg: '#0a2d16' },
+            { type: 'enemy', challengeId: 'sysdig_ag', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', enemyIcon: '🛡️', playerSprite: '🧔', text: '<b>The Project:</b> Building continuous vulnerability scanners embedded into the Sysdig Agent.<br><b>The Challenge:</b> Heavy scanners as DaemonSets were consuming too much client RAM.<br><b>The Solution:</b> Re-engineered scanning to run as isolated ReplicaSets, offloading heavy lift from nodes.', label: 'VULNERABILITY SCANNING', tNode: 4, bg: '#0a2d16' },
+            { type: 'dialogue', challengeId: 'sysdig_ag', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', icon: '⛪', comp: 'SYSDIG (Agent)', date: '2023 - 2025', speakerIcon: '👨‍💼', playerSprite: '🧔', text: '<b>Detailed Solution:</b><br><br>The issue was the DaemonSet architecture that cloned the entire vulnerability database onto every client K8s node. We rewrote the software in <i>Go</i>, moving the intelligence and heavy databases into a controlled set of isolated pods (ReplicaSet). Local agents now only collect package metadata and send it to the central ReplicaSet for analysis, reducing RAM usage by 80%.', label: '', tNode: 4, bg: '#0a2d16' },
+
+            { type: 'dialogue', challengeId: 'sysdig_be', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', speakerIcon: '👨‍💼', playerSprite: '🧔', text: 'Now that the agents are running lightweight, millions of security events flow into our backend.', label: '', tNode: 4, bg: '#0a2d16' },
+            { type: 'enemy', challengeId: 'sysdig_be', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', enemyIcon: '🖥️', playerSprite: '🧔', text: '<b>The Project:</b> Scaling the security backend to ingest high-frequency agent reports.<br><b>The Challenge:</b> Concurrent state writing created heavy database locks.<br><b>The Solution:</b> Built distributed lock mechanisms and massive caching on Redis using Go.', label: 'MASSIVE LOAD', tNode: 4, bg: '#0a2d16' },
+            { type: 'dialogue', challengeId: 'sysdig_be', level: 'LEVEL 4: SYSDIG', flag: '🇮🇹', icon: '⛪', comp: 'SYSDIG (Backend)', date: '2023 - 2025', speakerIcon: '👨‍💼', playerSprite: '🧔', text: '<b>Detailed Solution:</b><br><br>To avoid relational database locks caused by simultaneous writes from thousands of agents, we introduced a mediation layer based on <i>Redis</i>. Utilizing the Redlock algorithm for distributed locking and <i>Go</i> native concurrency primitives (Goroutines/channels), we queued database writes asynchronously, ensuring state integrity without blocking live APIs.', label: '', tNode: 4, bg: '#0a2d16' },
+
+            { type: 'walk', challengeId: 'avaloq_tax', level: 'LEVEL 5: ZURICH', flag: '🇨🇭', icon: '🏔️', playerSprite: '🧔', tNode: 3, bg: '#2d0a0a' },
+            { type: 'dialogue', challengeId: 'avaloq_tax', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', speakerIcon: '🤵‍♂️', playerSprite: '🧔', text: 'Back to Switzerland! Welcome again to Avaloq.', label: '', tNode: 3, bg: '#2d0a0a' },
+            { type: 'enemy', challengeId: 'avaloq_tax', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', enemyIcon: '🏦', playerSprite: '🧔', text: '<b>The Project:</b> Modernizing high-tier corporate Tax Calculating Engines.<br><b>The Challenge:</b> Legacy systems carry immense compliance risk. Errors trigger massive penalties.<br><b>The Solution:</b> Bulletproof transactions and modeling in PL/SQL to secure immutable data workflows.', label: 'TAX ENGINE OWNERSHIP', tNode: 3, bg: '#2d0a0a' },
+            { type: 'dialogue', challengeId: 'avaloq_tax', level: 'LEVEL 5: AVALOQ', flag: '🇨🇭', icon: '🏔️', comp: 'AVALOQ (Tax)', date: '2025 - Present', speakerIcon: '🤵‍♂️', playerSprite: '🧔', text: '<b>Detailed Solution:</b><br><br>The solution required a rigorous mathematical re-engineering of monetary transactions within <i>Oracle</i> tables. By using strict integrity constraints in <i>PL/SQL</i> and automated rollback procedures for even minimal rounding discrepancies, we secured the immutability of tax data. This ensures full adherence to Swiss and international regulations with zero decimal loss.', label: '', tNode: 3, bg: '#2d0a0a' },
+
+            { type: 'final', challengeId: 'final', level: 'QUEST COMPLETED!', flag: '🏁', icon: '🏆', comp: 'F. FERESINI', date: 'VICTORY!', playerSprite: '🧔', text: '<b>CONGRATULATIONS!</b><br><br>You completed the history. Federico is ready for the next big technical challenge. Reach out to collaborate!', label: 'GAME OVER', tNode: 5, bg: '#0d1117' }
         ];
 
         const game = {
             stepIndex: 0,
-            currentEmoji: '⛪',
-            currentPlayerSprite: '💻',
-            landmarkX: 0, 
             xp: 5,
-            totalEnemies: 7, 
-            isVoiceEnabled: false, 
+            isVoiceEnabled: false,
+            isBgmEnabled: false,
+            currentChallengeId: null,
+            audioCtx: null,
+            bgmInterval: null,
+            walkLoop: null,
+            confettiInterval: null,
 
             dom: {
                 view: document.getElementById('game-view'),
@@ -778,6 +443,7 @@
                 icon: document.getElementById('landmark'),
                 player: document.getElementById('player'),
                 enemy: document.getElementById('enemy'),
+                hpBar: document.getElementById('hp-bar'),
                 hpFill: document.getElementById('hp-fill'),
                 enemyLabel: document.getElementById('enemy-label'),
                 enemySprite: document.getElementById('enemy-sprite'),
@@ -785,88 +451,36 @@
                 date: document.getElementById('job-date'),
                 text: document.getElementById('cv-text'),
                 btn: document.getElementById('main-action-btn'),
-                secondaryBtn: document.getElementById('secondary-btn'), 
-                modal: document.getElementById('inventory-modal'),
-                invIcon: document.getElementById('inventory-icon'),
-                voiceIcon: document.getElementById('voice-icon'),
+                backBtn: document.getElementById('secondary-btn'),
                 ground: document.getElementById('ground'),
                 xpFill: document.getElementById('xp-fill'),
                 xpText: document.getElementById('xp-text'),
-                levelup: document.getElementById('level-up-overlay'),
-                nerdBg: document.getElementById('nerd-overlay')
+                voiceIcon: document.getElementById('voice-icon'),
+                bgmIcon: document.getElementById('bgm-icon'),
+                cvModal: document.getElementById('cv-modal'),
+                contactModal: document.getElementById('contact-modal')
             },
 
             init() {
-                document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-                this.generateNerdBackground();
                 this.render();
                 this.updateXPBar();
             },
 
-            generateNerdBackground() {
-                const elements = [
-                    'cout', '#include', 'using', 'std::', 'public:', 'class', 'struct', 'virtual', 
-                    'var', 'defer', 'func', 'go', 'chan', 'range', 'package', 
-                    'SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'JOIN', 
-                    'BEGIN', 'EXCEPTION', 'DECLARE', 'COMMIT', 'ROLLBACK', 
-                    'async', 'await', 'get', 'set', 'namespace', 'override', 
-                    '💻', '🖥️', '⌨️', '🖱️' 
-                ];
-                for(let i=0; i<18; i++) {
-                    const span = document.createElement('div');
-                    span.className = 'matrix-text';
-                    span.innerText = elements[Math.floor(Math.random() * elements.length)];
-                    span.style.left = Math.random() * 90 + '%';
-                    span.style.animationDuration = (3 + Math.random() * 5) + 's';
-                    span.style.animationDelay = (Math.random() * 5) + 's';
-                    this.dom.nerdBg.appendChild(span);
+            initAudio() {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            },
-
-            playArcadeAttackSound() {
-                try {
-                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-
-                    oscillator.type = 'square'; 
-                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); 
-                    oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.15); 
-
-                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15); 
-
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.15);
-                } catch(e) { }
             },
 
             handleAction() {
+                this.initAudio();
                 const current = gameScript[this.stepIndex];
-
-                if (current.type === 'walk' || current.type === 'text') {
+                if (current.type === 'walk' || current.type === 'text' || current.type === 'dialogue') {
                     this.next();
                 } else if (current.type === 'enemy') {
-                    this.doAttack();
+                    this.throwMouseAndAttack();
                 } else if (current.type === 'final') {
-                    this.stepIndex = 0;
-                    this.xp = 5;
-                    this.currentPlayerSprite = '💻';
-                    this.currentEmoji = '⛪';
-                    this.render();
-                    this.updateXPBar();
-                }
-            },
-
-            // Modificato: Gestione del pulsante secondario (CV o BACK)
-            handleSecondary() {
-                if (this.stepIndex === 0) {
-                    this.toggleInventory();
-                } else {
-                    this.prev();
+                    this.toggleModal('contact');
                 }
             },
 
@@ -877,353 +491,242 @@
                 }
             },
 
-            // Modificato: Funzione per tornare indietro saltando i livelli di passaggio "walk"
             prev() {
                 if (this.stepIndex > 0) {
                     this.stepIndex--;
-                    if (gameScript[this.stepIndex].type === 'walk' && this.stepIndex > 0) {
-                        this.stepIndex--;
-                    }
-                    this.dom.player.classList.remove('walking');
-                    this.dom.ground.classList.remove('scrolling-ground');
+                    if (gameScript[this.stepIndex].type === 'walk' && this.stepIndex > 0) this.stepIndex--;
                     this.render();
                 }
             },
 
-            doAttack() {
-                const p = this.dom.player;
-                const e = this.dom.enemy;
+            throwMouseAndAttack() {
                 const view = this.dom.view;
-                const current = gameScript[this.stepIndex];
-                
-                speechSynthesis.cancel();
-                this.playArcadeAttackSound();
-
-                p.style.animation = "none";
-                p.style.transform = 'translateY(-5px) scale(1.1)';
-                setTimeout(() => { p.style.transform = 'none'; }, 200);
-
                 const mouse = document.createElement('div');
                 mouse.className = 'projectile';
                 mouse.innerText = '🖱️';
                 mouse.style.left = '15%';
-                mouse.style.bottom = '35px';
+                mouse.style.bottom = '40px';
                 view.appendChild(mouse);
 
-                setTimeout(() => {
-                    mouse.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-                    mouse.style.left = '50%';
-                    mouse.style.bottom = '50px';
-                    mouse.style.transform = 'rotate(720deg) scale(1.2)';
-                }, 10);
-                
+                setTimeout(() => { mouse.style.left = '50%'; mouse.style.bottom = '40px'; }, 10);
+
                 setTimeout(() => {
                     mouse.remove();
                     this.dom.hpFill.style.width = '0%';
-                    view.classList.add('shaking');
-                    
                     const dmg = document.createElement('div');
                     dmg.className = 'damage-text';
-                    dmg.innerText = current.floating || 'HIT!';
-                    dmg.style.left = '50%';
-                    dmg.style.bottom = '60px';
+                    dmg.innerText = 'HIT!';
+                    dmg.style.left = '50%'; dmg.style.bottom = '60px';
                     view.appendChild(dmg);
                     
-                    this.createParticles(view);
-                    setTimeout(() => dmg.remove(), 800);
-
-                    if (current.skills) {
-                        current.skills.forEach((skill, index) => {
-                            setTimeout(() => {
-                                const s = document.createElement('div');
-                                s.className = 'skill-learned';
-                                s.innerText = "+ " + skill;
-                                s.style.left = '50%';
-                                s.style.bottom = '45px';
-                                view.appendChild(s);
-                                setTimeout(() => s.remove(), 1000);
-                            }, index * 200); 
-                        });
-                    }
-
-                }, 400);
-
-                setTimeout(() => {
-                    p.style.animation = "idle-breathe 1s ease-in-out infinite alternate";
-                    view.classList.remove('shaking');
-                    
-                    e.style.opacity = '0';
-                    e.style.transform = 'scale(0.5) translateY(-20px)'; 
-                    
-                    this.xp += Math.floor(95 / this.totalEnemies);
-                    this.updateXPBar();
-                    
                     setTimeout(() => {
+                        dmg.remove();
+                        this.xp += 10;
+                        this.updateXPBar();
                         this.dom.hpFill.style.width = '100%';
-                        this.next(); 
-                    }, 300);
-                }, 600);
-            },
-
-            createParticles(parent) {
-                const particleTypes = ['✨', '💥', '⭐'];
-                for (let i = 0; i < 6; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'particle';
-                    p.innerText = particleTypes[Math.floor(Math.random() * particleTypes.length)];
-                    p.style.left = '52%'; 
-                    p.style.bottom = '40px';
-                    parent.appendChild(p);
-
-                    const angle = Math.random() * Math.PI * 2;
-                    const velocity = 30 + Math.random() * 40;
-                    const vx = Math.cos(angle) * velocity;
-                    const vy = Math.sin(angle) * velocity;
-
-                    p.getBoundingClientRect(); 
-                    p.style.transform = `translate(${vx}px, ${-vy}px) scale(0.2)`;
-                    p.style.opacity = '0';
-                    setTimeout(() => p.remove(), 600);
-                }
-            },
-
-            createDust(parent) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.innerText = '💨';
-                p.style.left = '15%';
-                p.style.bottom = '25px';
-                parent.appendChild(p);
-                p.getBoundingClientRect(); 
-                p.style.transform = `translate(-30px, -10px) scale(1.5)`;
-                p.style.opacity = '0';
-                setTimeout(() => p.remove(), 400);
-            },
-
-            createVictoryConfetti(parent) {
-                const shapes = ['■', '▲', '●', '✦'];
-                const colors = ['#fbbf24', '#ef4444', '#22c55e', '#6366f1', '#f472b6'];
-                
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => {
-                        const c = document.createElement('div');
-                        c.className = 'confetti';
-                        c.innerText = shapes[Math.floor(Math.random() * shapes.length)];
-                        c.style.color = colors[Math.floor(Math.random() * colors.length)];
-                        c.style.left = (10 + Math.random() * 20) + '%';
-                        c.style.bottom = (40 + Math.random() * 30) + 'px';
-                        
-                        parent.appendChild(c);
-                        setTimeout(() => c.remove(), 2500);
-                    }, i * 100);
-                }
+                        this.next();
+                    }, 500);
+                }, 300);
             },
 
             updateXPBar() {
-                if(this.xp > 100) this.xp = 100;
-                this.dom.xpFill.style.width = `${this.xp}%`;
-                this.dom.xpText.innerText = `XP: ${this.xp} / 100`;
+                const val = Math.min(this.xp, 100);
+                this.dom.xpFill.style.width = `${val}%`;
+                this.dom.xpText.innerText = `XP: ${val} / 100`;
             },
 
-            showLevelUp() {
-                const overlay = this.dom.levelup;
-                overlay.style.display = 'block';
-                overlay.style.animation = 'level-up-anim 1.2s ease-out forwards';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    overlay.style.animation = 'none';
-                }, 1200);
-            },
-
-            toggleInventory() {
-                this.dom.modal.classList.toggle('open');
-            },
-
-            updateTimeline(index) {
-                const timelineStates = [
-                    ['t0'], ['t0', 'l1'], ['t0', 'l1', 't1'], ['t0', 'l1', 't1', 'l2'], 
-                    ['t0', 'l1', 't1', 'l2', 't2'], ['t0', 'l1', 't1', 'l2', 't2'], 
-                    ['t0', 'l1', 't1', 'l2', 't2', 'l3'], ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3'], 
-                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4'], ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4'], 
-                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4'], ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4', 'l5'], 
-                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4', 'l5', 't5'], 
-                    ['t0', 'l1', 't1', 'l2', 't2', 'l3', 't3', 'l4', 't4', 'l5', 't5', 'l6', 't6'] 
-                ];
-                
-                const activeElements = timelineStates[index] || [];
-                
-                for(let i=0; i<=6; i++) {
-                    const node = document.getElementById(`t${i}`);
-                    if(node) {
-                        if(activeElements.includes(`t${i}`)) node.classList.add('active');
-                        else node.classList.remove('active');
-                    }
-                    
-                    const line = document.getElementById(`l${i}`);
-                    if(line) {
-                        if(activeElements.includes(`l${i}`)) line.classList.add('active');
-                        else line.classList.remove('active');
-                    }
-                }
-            },
-
-            speak(text) {
-                if (!this.isVoiceEnabled) return;
-                speechSynthesis.cancel(); 
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US'; 
-                utterance.rate = 1.0; 
-                utterance.pitch = 1.0;
-                speechSynthesis.speak(utterance);
-            },
-
-            toggleVoice() {
+            toggleVoice() { 
+                this.initAudio();
                 this.isVoiceEnabled = !this.isVoiceEnabled;
-                if(this.isVoiceEnabled) {
-                    this.dom.voiceIcon.innerText = "🔊";
-                    const currentScript = gameScript[this.stepIndex].speechText;
-                    if(currentScript) this.speak(currentScript);
+                this.dom.voiceIcon.innerText = this.isVoiceEnabled ? "🔊" : "🔇";
+                if (this.isVoiceEnabled) {
+                    const state = gameScript[this.stepIndex];
+                    this.speak(state.text, state.challengeId);
                 } else {
-                    this.dom.voiceIcon.innerText = "🔇";
-                    speechSynthesis.cancel();
+                    window.speechSynthesis.cancel();
                 }
+            },
+
+            toggleBgm() {
+                this.initAudio();
+                this.isBgmEnabled = !this.isBgmEnabled;
+                this.dom.bgmIcon.innerText = this.isBgmEnabled ? "🎶" : "🎵";
+                if (this.isBgmEnabled) {
+                    this.startBgm();
+                } else {
+                    this.stopBgm();
+                }
+            },
+
+            startBgm() {
+                let step = 0;
+                const leadArp = [329.6, 392.0, 440.0, 523.2, 440.0, 392.0];
+                const bassArp = [164.8, 196.0, 220.0, 196.0];
+                
+                this.bgmInterval = setInterval(() => {
+                    const oscLead = this.audioCtx.createOscillator();
+                    const gainLead = this.audioCtx.createGain();
+                    oscLead.type = 'square';
+                    oscLead.frequency.setValueAtTime(leadArp[step % leadArp.length], this.audioCtx.currentTime);
+                    gainLead.gain.setValueAtTime(0.04, this.audioCtx.currentTime);
+                    oscLead.connect(gainLead);
+                    gainLead.connect(this.audioCtx.destination);
+                    oscLead.start();
+                    oscLead.stop(this.audioCtx.currentTime + 0.1);
+
+                    if (step % 2 === 0) {
+                        const oscBass = this.audioCtx.createOscillator();
+                        const gainBass = this.audioCtx.createGain();
+                        oscBass.type = 'triangle';
+                        oscBass.frequency.setValueAtTime(bassArp[(step / 2) % bassArp.length], this.audioCtx.currentTime);
+                        gainBass.gain.setValueAtTime(0.08, this.audioCtx.currentTime);
+                        oscBass.connect(gainBass);
+                        gainBass.connect(this.audioCtx.destination);
+                        oscBass.start();
+                        oscBass.stop(this.audioCtx.currentTime + 0.2);
+                    }
+                    step++;
+                }, 150);
+            },
+
+            stopBgm() {
+                if (this.bgmInterval) clearInterval(this.bgmInterval);
+            },
+
+            toggleModal(type) {
+                const modal = type === 'cv' ? this.dom.cvModal : this.dom.contactModal;
+                modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+            },
+
+            speak(text, challengeId) {
+                if (!this.isVoiceEnabled) return;
+                if (this.currentChallengeId !== challengeId) {
+                    window.speechSynthesis.cancel();
+                    this.currentChallengeId = challengeId;
+                }
+                const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            },
+
+            createWalkParticles() {
+                const p = document.createElement('div');
+                p.className = 'dust-particle';
+                p.style.left = '14%'; p.style.bottom = '25px';
+                const size = Math.random() * 8 + 4;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                this.dom.view.appendChild(p);
+                setTimeout(() => p.remove(), 600);
+            },
+
+            createConfetti() {
+                const colors = ['#ff0055', '#00ffff', '#ffff00', '#00ff00', '#ff00ff'];
+                const p = document.createElement('div');
+                p.className = 'confetti';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                this.dom.view.appendChild(p);
+                setTimeout(() => p.remove(), 3000);
+            },
+
+            // Funzione di evoluzione rimessa in posizione che sblocca il movimento
+            triggerEvolution(newSprite, callback) {
+                const spriteEl = document.getElementById('player-sprite');
+                spriteEl.classList.add('evolving');
+                
+                setTimeout(() => {
+                    spriteEl.innerText = newSprite;
+                    spriteEl.classList.remove('evolving');
+                    if (callback) callback();
+                }, 200);
             },
 
             render() {
                 const state = gameScript[this.stepIndex];
-                
-                this.dom.view.style.background = state.bg;
-                this.dom.level.innerHTML = `${state.level} <span class="flag-icon">${state.flag}</span>`;
-                
-                this.dom.company.innerText = state.comp !== undefined ? state.comp : '';
-                this.dom.date.innerText = state.date !== undefined ? state.date : '';
-                this.dom.text.innerHTML = state.text !== undefined ? state.text : '';
+                this.dom.level.innerHTML = `${state.level} <span>${state.flag}</span>`;
+                this.dom.company.innerText = state.comp || '';
+                this.dom.date.innerText = state.date || '';
+                this.dom.text.innerHTML = state.text || '';
+                this.dom.icon.innerText = state.icon;
+                this.dom.view.style.background = state.bg || '#0d1117';
+                this.dom.text.scrollTop = 0;
 
-                // Modificato: Gestione dei pulsanti se siamo sul menu (0) o all'interno del gioco
-                if (this.stepIndex === 0) {
-                    this.dom.nerdBg.style.display = 'block';
-                    this.dom.secondaryBtn.innerText = "📄 VIEW CV";
-                    this.dom.secondaryBtn.style.backgroundColor = "#d97706";
-                    this.dom.secondaryBtn.style.boxShadow = "0 5px 0 #92400e";
+                const continueRender = () => {
+                    if (state.type === 'final') {
+                        this.dom.btn.innerText = '📞 CONTACT';
+                        this.dom.btn.style.backgroundColor = 'var(--skill-color)';
+                    } else if (state.type === 'enemy') {
+                        this.dom.btn.innerText = 'ATTACK!';
+                        this.dom.btn.style.backgroundColor = 'var(--enemy-color)';
+                    } else {
+                        this.dom.btn.innerText = 'NEXT';
+                        this.dom.btn.style.backgroundColor = 'var(--ui-color)';
+                    }
+
+                    this.speak(state.text, state.challengeId);
+
+                    document.querySelectorAll('.t-node').forEach(n => n.classList.remove('active'));
+                    document.querySelectorAll('.t-line').forEach(l => l.classList.remove('active'));
+                    for(let i = 0; i <= state.tNode; i++) {
+                        const node = document.getElementById(`t${i}`);
+                        if(node) node.classList.add('active');
+                        const line = document.getElementById(`l${i}`);
+                        if(line) line.classList.add('active');
+                    }
+
+                    this.dom.player.classList.remove('walking', 'victory-dance');
+                    this.dom.ground.classList.remove('scrolling-ground');
+                    this.dom.enemy.classList.remove('active');
                     
-                    this.dom.btn.innerText = "▶ PLAY GAME";
-                    this.dom.btn.style.backgroundColor = "var(--ui-color)";
-                    this.dom.btn.style.boxShadow = "0 5px 0 #3730a3";
-                } else {
-                    this.dom.nerdBg.style.display = 'none';
-                    this.dom.secondaryBtn.innerText = "⬅️ BACK";
-                    this.dom.secondaryBtn.style.backgroundColor = "#4b5563";
-                    this.dom.secondaryBtn.style.boxShadow = "0 5px 0 #1f2937";
-                }
+                    if (this.walkLoop) clearInterval(this.walkLoop);
+                    if (this.confettiInterval) clearInterval(this.confettiInterval);
 
-                this.updateTimeline(this.stepIndex);
-
-                if (state.speechText) { this.speak(state.speechText); }
-
-                if (state.type !== 'final') { this.dom.player.classList.remove('victory-dance'); }
-
-                if (this.currentPlayerSprite !== state.playerSprite) {
-                    this.currentPlayerSprite = state.playerSprite;
-                    this.dom.player.classList.add('evolving');
-                    setTimeout(() => { this.dom.player.innerText = state.playerSprite; }, 300);
-                    setTimeout(() => { this.dom.player.classList.remove('evolving'); }, 600);
-                } else {
-                    this.dom.player.innerText = state.playerSprite;
-                }
-
-                if (this.currentEmoji !== state.icon) {
-                    this.showLevelUp();
-                    this.dom.icon.style.transition = "transform 0.4s ease-in, opacity 0.4s";
-                    this.dom.icon.style.transform = `translateX(${this.landmarkX - 120}px)`;
-                    this.dom.icon.style.opacity = "0";
-                    
                     setTimeout(() => {
-                        this.dom.icon.innerText = state.icon;
-                        this.dom.icon.style.transition = "none";
-                        this.landmarkX = 100; 
-                        this.dom.icon.style.transform = `translateX(${this.landmarkX}px)`;
-                        this.dom.icon.getBoundingClientRect(); 
-                        this.dom.icon.style.transition = "transform 0.4s ease-out, opacity 0.4s";
-                        this.landmarkX = 0; 
-                        this.dom.icon.style.transform = `translateX(${this.landmarkX}px)`;
-                        this.dom.icon.style.opacity = "0.15";
-                    }, 400);
-                    
-                    this.currentEmoji = state.icon;
-                } else {
-                    if (state.type === 'walk') { this.landmarkX -= 60; }
-                    this.dom.icon.style.transition = "transform 0.7s linear";
-                    this.dom.icon.style.transform = `translateX(${this.landmarkX}px)`;
-                }
+                        if (state.type === 'walk') {
+                            this.dom.player.classList.add('walking');
+                            this.dom.ground.classList.add('scrolling-ground');
+                            this.dom.hpBar.style.display = 'none';
 
-                if (state.type === 'final') { this.dom.invIcon.classList.add('bump-invoker'); } 
-                else { this.dom.invIcon.classList.remove('bump-invoker'); }
+                            this.walkLoop = setInterval(() => {
+                                this.createWalkParticles();
+                            }, 80);
 
-                switch (state.type) {
-                    case 'walk':
-                        this.dom.btn.innerText = "WALKING... ➡️";
-                        this.dom.btn.style.backgroundColor = "var(--ui-color)";
-                        this.dom.btn.style.boxShadow = "0 5px 0 #3730a3";
-                        this.dom.player.style.animation = "none";
-                        this.dom.player.classList.add('walking');
-                        this.dom.ground.classList.add('scrolling-ground');
-                        
-                        this.dom.enemy.style.opacity = '0';
-                        this.dom.enemy.style.transform = 'translateX(200px)';
-                        
-                        const dustInterval = setInterval(() => {
-                            if (this.dom.player.classList.contains('walking')) { this.createDust(this.dom.view); } 
-                            else { clearInterval(dustInterval); }
-                        }, 150);
-
-                        setTimeout(() => { clearInterval(dustInterval); this.handleAction(); }, 700); 
-                        break;
-                    
-                    case 'enemy':
-                        this.dom.player.classList.remove('walking');
-                        this.dom.player.style.animation = "idle-breathe 1s ease-in-out infinite alternate";
-                        this.dom.ground.classList.remove('scrolling-ground');
-                        this.dom.enemyLabel.innerText = state.enemy;
-                        this.dom.enemySprite.innerText = state.enemyIcon;
-                        
-                        this.dom.enemy.style.opacity = '1';
-                        this.dom.enemy.style.transform = 'translateX(0)';
-                        
-                        this.dom.btn.innerText = "DEFEAT CHALLENGE & ACQUIRE SKILL ⚔️";
-                        this.dom.btn.style.backgroundColor = "var(--enemy-color)";
-                        this.dom.btn.style.boxShadow = "0 5px 0 #b91c1c";
-                        break;
-                    
-                    case 'text':
-                        this.dom.player.classList.remove('walking');
-                        this.dom.player.style.animation = "idle-breathe 1s ease-in-out infinite alternate";
-                        this.dom.ground.classList.remove('scrolling-ground');
-                        
-                        this.dom.enemy.style.opacity = '0';
-                        this.dom.enemy.style.transform = 'translateX(200px)';
-                        
-                        // Modifica: Se non siamo allo step 0 (cioè siamo nei testi finali), rimettiamo il tasto standard
-                        if (this.stepIndex !== 0) {
-                            this.dom.btn.innerText = "NEXT ➡️";
-                            this.dom.btn.style.backgroundColor = "var(--ui-color)";
-                            this.dom.btn.style.boxShadow = "0 5px 0 #3730a3";
+                            setTimeout(() => this.handleAction(), 1200);
+                        } 
+                        else if (state.type === 'dialogue') {
+                            this.dom.enemy.classList.add('active');
+                            this.dom.enemyLabel.innerText = state.label || 'INFO';
+                            this.dom.enemyLabel.style.display = state.label ? 'block' : 'none';
+                            this.dom.enemyLabel.style.backgroundColor = '#4b5563'; 
+                            this.dom.enemySprite.innerText = state.speakerIcon;
+                            this.dom.hpBar.style.display = 'none';
+                        } 
+                        else if (state.type === 'enemy') {
+                            this.dom.enemy.classList.add('active');
+                            this.dom.enemyLabel.innerText = state.label;
+                            this.dom.enemyLabel.style.display = 'block';
+                            this.dom.enemyLabel.style.backgroundColor = 'var(--enemy-color)'; 
+                            this.dom.enemySprite.innerText = state.enemyIcon;
+                            this.dom.hpBar.style.display = 'block';
+                        } 
+                        else if (state.type === 'final') {
+                            this.dom.player.classList.add('victory-dance');
+                            this.confettiInterval = setInterval(() => {
+                                this.createConfetti();
+                            }, 50);
                         }
-                        break;
+                    }, 50); 
+                };
 
-                    case 'final':
-                         this.dom.player.classList.remove('walking');
-                         this.dom.ground.classList.remove('scrolling-ground');
-                         
-                         this.dom.enemy.style.opacity = '0';
-                         this.dom.enemy.style.transform = 'translateX(200px)';
-                         
-                         this.dom.player.style.animation = "none";
-                         this.dom.player.classList.add('victory-dance');
-                         this.createVictoryConfetti(this.dom.view);
-                         this.dom.btn.innerText = "CONTACT ME ✉️";
-                         this.dom.btn.style.backgroundColor = "var(--skill-color)";
-                         this.dom.btn.style.boxShadow = "0 5px 0 #15803d";
-                         break;
+                const spriteEl = document.getElementById('player-sprite');
+                if (spriteEl.innerText !== state.playerSprite && spriteEl.innerText !== '🕹️') {
+                    this.triggerEvolution(state.playerSprite, continueRender);
+                } else {
+                    spriteEl.innerText = state.playerSprite;
+                    continueRender();
                 }
             }
         };
